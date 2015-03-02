@@ -1,20 +1,14 @@
 #ifndef WORLDMANAGER_H_
 #define WORLDMANAGER_H_
 
-//includes
 #include <vector>
 #include <memory>
 
 // forward declarations
 class Player;
 class Enemy;
-class Boss;
 class IEnemyFactory;
  
-/*
-	WorldManager Singleton
-*/
-
 class WorldManager
 {
 

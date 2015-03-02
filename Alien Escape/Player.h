@@ -17,10 +17,6 @@ public:
 	void boost(){ std::cout << "Player boosting" << std::endl; }; // boost
 	virtual void update(); // update Player
 	virtual void cleanUp(); // delete Player object
-	
-	// sprite
-	virtual cocos2d::Sprite* getSprite();
-	virtual void setSprite(char* pathToFile);
 
 	// getters
 	int getState(){ return m_ePlayerState; };

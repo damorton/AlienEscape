@@ -16,6 +16,7 @@ public:
 	GameManager(){ this->init(); }; 
 	~GameManager(){ this->cleanUp(); }; 
 	bool init(); 	
+	bool start();
 	bool update(); 
 	bool loadMedia();
 	void cleanUp(); 		

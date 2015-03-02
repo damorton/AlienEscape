@@ -1,5 +1,6 @@
 #include "GameManager.h"
 #include "Definitions.h"
+#include "Player.h"
 #include "Timer.h"
 
 bool GameManager::init()
@@ -53,11 +54,14 @@ bool GameManager::init()
 		}
 	}
 
+	// create the player
+	std::shared_ptr<Player> m_pPlayer(new Player());
+
 	return success;
 }
 
-bool GameManager::update()
-{	
+bool GameManager::start()
+{
 	//Start up SDL and create window
 	if (!init())
 	{
@@ -72,64 +76,70 @@ bool GameManager::update()
 		}
 		else
 		{
-			//Main loop flag
-			bool quit = false;
-
-			//Event handler
-			SDL_Event e;
-
-			//The dot that will be moving around on the screen
-			//Dot dot;
-			//Player player;
-
-			//Keeps track of time between steps
-			Timer stepTimer;
-
-			//While application is running
-			while (!quit)
-			{
-				//Handle events on queue
-				while (SDL_PollEvent(&e) != 0)
-				{
-					//User requests quit
-					if (e.type == SDL_QUIT)
-					{
-						quit = true;
-					}
-
-					//Handle input for the dot
-					//dot.handleEvent(e);
-					//player.handleEvent(e);
-				}
-
-				//Calculate time step
-				float timeStep = stepTimer.getTicks() / 1000.f;
-
-				//Move for time step
-				//dot.move(timeStep);
-				//player.move(timeStep);
-
-				//Restart step timer
-				stepTimer.start();
-
-				//Clear screen
-				SDL_SetRenderDrawColor(m_Renderer, 0xFF, 0xFF, 0xFF, 0xFF);
-				SDL_RenderClear(m_Renderer);
-
-				//Render dot
-				//dot.render();
-				//player.render();
-
-				//Update screen
-				SDL_RenderPresent(m_Renderer);
-			}
+			// run game loop
+			this->update();
 		}
 	}
 
 	//Free resources and close SDL
 	this->cleanUp();
 
-	return 0;	
+	return 0;
+}
+
+
+bool GameManager::update()
+{	
+	//Main loop flag
+	bool quit = false;
+
+	//Event handler
+	SDL_Event e;
+		
+	//Keeps track of time between steps
+	Timer stepTimer;
+
+	// -------------------------------------- GAME LOOP START ---------------------------------
+	
+	//While application is running
+	while (!quit)
+	{
+		//Handle events on queue
+		while (SDL_PollEvent(&e) != 0)
+		{
+			//User requests quit
+			if (e.type == SDL_QUIT)
+			{
+				quit = true;
+			}
+
+			//Handle input for the dot
+			//dot.handleEvent(e);
+			m_pPlayer->handleEvent(e);
+		}
+
+		//Calculate time step
+		float timeStep = stepTimer.getTicks() / 1000.f;
+
+		//Move for time step
+		m_pPlayer.move(timeStep);
+
+		//Restart step timer
+		stepTimer.start();
+
+		//Clear screen
+		SDL_SetRenderDrawColor(m_Renderer, 0xFF, 0xFF, 0xFF, 0xFF);
+		SDL_RenderClear(m_Renderer);
+
+		//Render dot
+		m_pPlayer.render();
+
+		//Update screen
+		SDL_RenderPresent(m_Renderer);
+	}
+
+	// -------------------------------------- GAME LOOP END ---------------------------------
+		
 }
 
 bool GameManager::loadMedia()

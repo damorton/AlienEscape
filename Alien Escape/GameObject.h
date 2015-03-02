@@ -4,11 +4,11 @@
 
 #include "Sprite.h"
 
-typedef enum { OBJECT, PLAYER, ENEMY, BOSS } EGameOjectType;
+typedef enum { OBJECT, PLAYER, ENEMY} EGameOjectType;
 
 class GameObject : public Sprite
 {
-public:
+protected:
 	GameObject(){ this->init(); };
 	~GameObject(){ this->cleanUp(); };
 	virtual bool init();
@@ -43,17 +43,33 @@ public:
 	void setRotationX(float x){ m_fRotationX = x; }
 	void setRotationY(float y){ m_fRotationY = y; }
 	void setRotation(float x, float y){ m_fRotationX = x; m_fRotationY = y; };
-
-	void setBoundingBox(cocos2d::Rect boundingBox){ m_boundingBoxRect = boundingBox; };
-
+	
 	void setCollided(bool isCollided){ m_bIsCollided = isCollided; }
 
 	// set game object type
 	void setType(EGameOjectType type){ m_eType = type; };
 
 	void setName(char* name){ m_strName = name; };
+	
 
-protected:
+	//Sets the dot
+	void init(int x, int y, int lvlWidth, int lvlHeight);
+
+	//Handles keypress
+	void handle_input();
+
+	//Moves the dot
+	void move();
+
+	//Shows the dot
+	void show();
+
+	//Sets the camera over the dot
+	void set_camera();
+
+	//Gets the dot's collision box
+	operator SDL_Rect();
+
 	// 2d coordinate position
 	float m_fPositionX;
 	float m_fPositionY;
@@ -65,21 +81,25 @@ protected:
 	// rotation data
 	float m_fRotationX;
 	float m_fRotationY;
-
-	// game objects bounding box
-	cocos2d::Rect m_boundingBoxRect;
 		
 	// collisions
 	bool m_bIsCollided;
 
 	// name of the object
 	char* m_strName;
-	
-	cocos2d::Size visibleSize;
-	cocos2d::Vec2 origin;
-	cocos2d::Vec2 playerPosition;
-	
+		
 	EGameOjectType m_eType;
+
+private:
+	//The collision box of the dot
+	SDL_Rect box;
+
+	//The velocity of the dot
+	int xVel, yVel;
+
+	//The current level dimensions
+	int curLvlWidth;
+	int curLvlHeight;
 };
 
 #endif
