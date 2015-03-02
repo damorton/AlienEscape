@@ -44,38 +44,31 @@ void Player::handleEvent(SDL_Event& e)
 	}
 }
 
-void Player::move(float timeStep)
+void Player::move()
 {
 	//Move the dot left or right
-	mPosX += mVelX * timeStep;
+	mPosX += mVelX;
 
 	//If the dot went too far to the left or right
-	if (mPosX < 0)
+	if ((mPosX < 0) || (mPosX + DOT_WIDTH > SCREEN_WIDTH))
 	{
-		mPosX = 0;
-	}
-	else if (mPosX > SCREEN_WIDTH - DOT_WIDTH)
-	{
-		mPosX = SCREEN_WIDTH - DOT_WIDTH;
+		//Move back
+		mPosX -= mVelX;
 	}
 
 	//Move the dot up or down
-	mPosY += mVelY * timeStep;
+	mPosY += mVelY;
 
 	//If the dot went too far up or down
-	if (mPosY < 0)
+	if ((mPosY < 0) || (mPosY + DOT_HEIGHT > SCREEN_HEIGHT))
 	{
-		mPosY = 0;
-	}
-	else if (mPosY > SCREEN_HEIGHT - DOT_HEIGHT)
-	{
-		mPosY = SCREEN_HEIGHT - DOT_HEIGHT;
+		//Move back
+		mPosY -= mVelY;
 	}
 }
 
-void Player::renderPlayer()
-{
-	//Show the dot	
-	this->render((int)mPosX, (int)mPosY);
+void Player::render(Sprite* playerSprite, SDL_Rect* currentClip)
+{	
+	playerSprite->render((int)mPosX, (int)mPosY, currentClip);
 }
 

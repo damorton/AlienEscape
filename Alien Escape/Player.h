@@ -1,13 +1,14 @@
 #ifndef PLAYER_H_
 #define	PLAYER_H_
 
-// includes
 #include <iostream>
-#include "Character.h" 
+#include "Sprite.h"
 
-class Player : public Sprite
+class Player
 {
 public:
+
+	Player(){ this->init(); };
 
 	typedef enum { ALIVE, DEAD, BOOSTING, JUMPING } EPlayerState; // player state
 
@@ -17,9 +18,7 @@ public:
 
 	//Maximum axis velocity of the dot
 	static const int DOT_VEL = 10;
-
-	Player(){ this->init(); }; // constructor
-	
+		
 	bool init(); // initialization	
 	void cleanUp(); // delete Player object
 
@@ -37,10 +36,10 @@ public:
 	void handleEvent(SDL_Event& e);
 
 	//Moves the dot
-	void move(float timeStep);
+	void move();
 
 	//Shows the dot on the screen
-	void renderPlayer();
+	void render(Sprite* playerSprite, SDL_Rect* currentClip);
 
 private:
 	EPlayerState m_ePlayerState; // Player state

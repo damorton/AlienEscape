@@ -4,6 +4,8 @@
 #include "Player.h"
 #include "Timer.h"
 
+Sprite gPlayerSprite;
+
 bool GameManager::init()
 {
 	//Initialization flag
@@ -50,11 +52,13 @@ bool GameManager::init()
 				{
 					printf("SDL_image could not initialize! SDL_image Error: %s\n", IMG_GetError());
 					success = false;
-				}
+				}			
 			}
 		}
 	}
 
+	// Create the player
+	std::shared_ptr<Player> m_pPlayer(new Player());
 	WorldManager::getInstance()->setRenderer(m_Renderer);
 	return success;
 }
@@ -86,60 +90,13 @@ bool GameManager::start()
 	return 0;
 }
 
-
-void GameManager::update()
-{	
-	//Main loop flag
-	bool quit = false;
-
-	//Event handler
-	SDL_Event e;
-
-	//Current animation frame
-	int frame = 0;
-
-	//While application is running
-	while (!quit)
-	{
-		//Handle events on queue
-		while (SDL_PollEvent(&e) != 0)
-		{
-			//User requests quit
-			if (e.type == SDL_QUIT)
-			{
-				quit = true;
-			}
-		}
-
-		//Clear screen
-		SDL_SetRenderDrawColor(WorldManager::getInstance()->getRenderer(), 0xFF, 0xFF, 0xFF, 0xFF);
-		SDL_RenderClear(WorldManager::getInstance()->getRenderer());
-
-		//Render current frame
-		SDL_Rect* currentClip = &gSpriteClips[frame / 4];
-		playerSpriteSheet.render((SCREEN_WIDTH - currentClip->w) / 2, (SCREEN_HEIGHT - currentClip->h) / 2, currentClip);
-
-		//Update screen
-		SDL_RenderPresent(WorldManager::getInstance()->getRenderer());
-
-		//Go to next frame
-		++frame;
-
-		//Cycle animation
-		if (frame / 4 >= WALKING_ANIMATION_FRAMES)
-		{
-			frame = 0;
-		}
-	}
-}
-
 bool GameManager::loadMedia()
 {
 	//Loading success flag
 	bool success = true;
 
 	//Load sprite sheet texture
-	if (!playerSpriteSheet.loadFromFile("Sprites/foo.png"))
+	if (!gPlayerSprite.loadFromFile("Sprites/foo.png"))
 	{
 		printf("Failed to load walking animation texture!\n");
 		success = false;
@@ -171,10 +128,66 @@ bool GameManager::loadMedia()
 	return success;
 }
 
+void GameManager::update()
+{	
+	//Main loop flag
+	bool quit = false;
+
+	//Event handler
+	SDL_Event e;
+	
+	// Player
+	Player player;
+
+	//Current animation frame
+	int frame = 0;
+
+	//While application is running
+	while (!quit)
+	{
+		//Handle events on queue
+		while (SDL_PollEvent(&e) != 0)
+		{
+			//User requests quit
+			if (e.type == SDL_QUIT)
+			{
+				quit = true;
+			}
+
+			player.handleEvent(e);
+		}
+
+		player.move();
+
+		//Clear screen
+		SDL_SetRenderDrawColor(WorldManager::getInstance()->getRenderer(), 0xFF, 0xFF, 0xFF, 0xFF);
+		SDL_RenderClear(WorldManager::getInstance()->getRenderer());
+
+		//Render current frame
+		SDL_Rect* currentClip = &gSpriteClips[frame / 4];
+		//gPlayerSprite.render((SCREEN_WIDTH - currentClip->w) / 2, (SCREEN_HEIGHT - currentClip->h) / 2, currentClip);
+		player.render(&gPlayerSprite, currentClip);
+
+		//Update screen
+		SDL_RenderPresent(WorldManager::getInstance()->getRenderer());
+
+		//Go to next frame
+		++frame;
+
+		//Cycle animation
+		if (frame / 4 >= WALKING_ANIMATION_FRAMES)
+		{
+			frame = 0;
+		}
+
+	}
+}
+
+
 void GameManager::cleanUp()
 {
 	//Free loaded images
-	playerSpriteSheet.free();
+	gPlayerSprite.free();
 
 	//Destroy window	
 	SDL_DestroyRenderer(m_Renderer);

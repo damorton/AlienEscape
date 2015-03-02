@@ -30,7 +30,7 @@ private:
 	//The window renderer
 	SDL_Renderer* m_Renderer = NULL;
 		
-	Sprite playerSpriteSheet;
+	//Sprite m_pPlayer;
 
 	// Player
 	std::shared_ptr<Player> m_pPlayer;

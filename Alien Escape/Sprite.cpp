@@ -86,7 +86,7 @@ void Sprite::setAlpha(Uint8 alpha)
 	SDL_SetTextureAlphaMod(mTexture, alpha);
 }
 
-void Sprite::render(int x, int y, SDL_Rect* clip)
+void Sprite::render(int x, int y, SDL_Rect* clip, double angle, SDL_Point* center, SDL_RendererFlip flip)
 {
 	//Set rendering space and render to screen
 	SDL_Rect renderQuad = { x, y, mWidth, mHeight };
@@ -99,7 +99,7 @@ void Sprite::render(int x, int y, SDL_Rect* clip)
 	}
 
 	//Render to screen
-	SDL_RenderCopy(WorldManager::getInstance()->getRenderer(), mTexture, clip, &renderQuad);
+	SDL_RenderCopyEx(WorldManager::getInstance()->getRenderer(), mTexture, clip, &renderQuad, angle, center, flip);
 }
 
 int Sprite::getWidth()
