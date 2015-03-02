@@ -69,42 +69,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Character.cpp" />
-    <ClCompile Include="CollisionManager.cpp" />
-    <ClCompile Include="EndScene.cpp" />
-    <ClCompile Include="Enemy.cpp" />
-    <ClCompile Include="EnemyFactory.cpp" />
-    <ClCompile Include="GameManager.cpp" />
-    <ClCompile Include="GameObject.cpp" />
-    <ClCompile Include="Game.cpp" />
-    <ClCompile Include="GameState.cpp" />
-    <ClCompile Include="Intro.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="MainMenu.cpp" />
-    <ClCompile Include="PauseScene.cpp" />
-    <ClCompile Include="Player.cpp" />
     <ClCompile Include="Sprite.cpp" />
-    <ClCompile Include="Timer.cpp" />
     <ClCompile Include="WorldManager.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Character.h" />
-    <ClInclude Include="CollisionManager.h" />
     <ClInclude Include="Definitions.h" />
-    <ClInclude Include="EndScene.h" />
-    <ClInclude Include="Enemy.h" />
-    <ClInclude Include="EnemyFactory.h" />
-    <ClInclude Include="GameManager.h" />
-    <ClInclude Include="GameObject.h" />
-    <ClInclude Include="Game.h" />
-    <ClInclude Include="GameState.h" />
-    <ClInclude Include="IEnemyFactory.h" />
-    <ClInclude Include="Intro.h" />
-    <ClInclude Include="MainMenu.h" />
-    <ClInclude Include="PauseScene.h" />
-    <ClInclude Include="Player.h" />
     <ClInclude Include="Sprite.h" />
-    <ClInclude Include="Timer.h" />
     <ClInclude Include="WorldManager.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

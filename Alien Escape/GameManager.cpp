@@ -1,4 +1,5 @@
 #include "GameManager.h"
+#include "WorldManager.h"
 #include "Definitions.h"
 #include "Player.h"
 #include "Timer.h"
@@ -31,8 +32,8 @@ bool GameManager::init()
 		}
 		else
 		{
-			//Create renderer for window
-			m_Renderer = SDL_CreateRenderer(m_Window, -1, SDL_RENDERER_ACCELERATED);
+			//Create vsynced renderer for window
+			m_Renderer = SDL_CreateRenderer(m_Window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
 			if (m_Renderer == NULL)
 			{
 				printf("Renderer could not be created! SDL Error: %s\n", SDL_GetError());
@@ -52,8 +53,10 @@ bool GameManager::init()
 				}
 			}
 		}
-	}
+	}		
 
+	
+	WorldManager::getInstance()->setRenderer(m_Renderer);
 	// create the player
 	std::shared_ptr<Player> m_pPlayer(new Player());
 
@@ -88,17 +91,20 @@ bool GameManager::start()
 }
 
 
-bool GameManager::update()
+void GameManager::update()
 {	
 	//Main loop flag
 	bool quit = false;
 
 	//Event handler
 	SDL_Event e;
+
+	//Current animation frame
+	int frame = 0;
 		
 	//Keeps track of time between steps
 	Timer stepTimer;
-
+	
 	// -------------------------------------- GAME LOOP START ---------------------------------
 	
 	//While application is running
@@ -114,7 +120,6 @@ bool GameManager::update()
 			}
 
 			//Handle input for the dot
-			//dot.handleEvent(e);
 			m_pPlayer->handleEvent(e);
 		}
 
@@ -122,7 +127,7 @@ bool GameManager::update()
 		float timeStep = stepTimer.getTicks() / 1000.f;
 
 		//Move for time step
-		m_pPlayer.move(timeStep);
+		m_pPlayer->move(timeStep);
 
 		//Restart step timer
 		stepTimer.start();
@@ -132,7 +137,7 @@ bool GameManager::update()
 		SDL_RenderClear(m_Renderer);
 
 		//Render dot
-		m_pPlayer.render();
+		m_pPlayer->renderPlayer();
 
 		//Update screen
 		SDL_RenderPresent(m_Renderer);
@@ -147,12 +152,34 @@ bool GameManager::loadMedia()
 	//Loading success flag
 	bool success = true;
 
-	//Load dot texture
-	//if (!gDotTexture.loadFromFile("44_frame_independent_movement/dot.bmp"))
-	if (!m_pPlayer.loadFromFile("44_frame_independent_movement/dot.bmp"))
+	//Load sprite sheet texture
+	if (!gSpriteSheetTexture.loadFromFile("textures/foo.png"))
 	{
-		printf("Failed to load dot texture!\n");
+		printf("Failed to load walking animation texture!\n");
 		success = false;
+	}
+	else
+	{
+		//Set sprite clips
+		gSpriteClips[0].x = 0;
+		gSpriteClips[0].y = 0;
+		gSpriteClips[0].w = 64;
+		gSpriteClips[0].h = 205;
+
+		gSpriteClips[1].x = 64;
+		gSpriteClips[1].y = 0;
+		gSpriteClips[1].w = 64;
+		gSpriteClips[1].h = 205;
+
+		gSpriteClips[2].x = 128;
+		gSpriteClips[2].y = 0;
+		gSpriteClips[2].w = 64;
+		gSpriteClips[2].h = 205;
+
+		gSpriteClips[3].x = 196;
+		gSpriteClips[3].y = 0;
+		gSpriteClips[3].w = 64;
+		gSpriteClips[3].h = 205;
 	}
 
 	return success;
@@ -160,9 +187,9 @@ bool GameManager::loadMedia()
 
 void GameManager::cleanUp()
 {
-	//Free loaded images
-	//gDotTexture.free();
-	m_pPlayer.free();
+	//Free loaded images	
+	m_pPlayer->free();	
+	m_pPlayer = NULL;
 
 	//Destroy window	
 	SDL_DestroyRenderer(m_Renderer);

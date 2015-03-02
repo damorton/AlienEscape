@@ -14,10 +14,7 @@ public:
 	virtual void runAI(); // run Enemy AI
 	virtual void update(); // update the Enemy
 	virtual void cleanUp(); // house keeping 
-
-	// sprite
-	virtual cocos2d::Sprite* getSprite();
-	virtual void setSprite(char* pathToFile);
+	
 };
 
 #endif

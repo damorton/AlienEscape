@@ -1,57 +1,81 @@
 #include <iostream>
 #include "Player.h"
+#include "Definitions.h"
+#include "GameManager.h"
 
-/*
-	Initialize the player
-
-	@return bool true if initialized, false if not
-*/
 bool Player::init()
-{	
-	Player::playerPosition = cocos2d::Vec2(visibleSize.width / 4 + origin.x, visibleSize.height / 3 + origin.y);
-	setType(EGameOjectType::PLAYER);
-	setName("Player One - Forrest");
+{		
+	//Initialize the offsets
+	mPosX = 0;
+	mPosY = 0;
+
+	//Initialize the velocity
+	mVelX = 0;
+	mVelY = 0;
+
 	return true;
 }
 
-/*
-	get player sprite information
-
-	@return cocos2d::Sprite* the player sprite information
-*/
-cocos2d::Sprite* Player::getSprite()
-{	
-	return m_pCharacterSprite;
-}
-
-/*
-	set player sprite information
-*/
-void Player::setSprite(char* pathToFile)
+void Player::handleEvent(SDL_Event& e)
 {
-	m_pCharacterSprite = cocos2d::Sprite::create(pathToFile);
+	//If a key was pressed
+	if (e.type == SDL_KEYDOWN && e.key.repeat == 0)
+	{
+		//Adjust the velocity
+		switch (e.key.keysym.sym)
+		{
+		case SDLK_UP: mVelY -= DOT_VEL; break;
+		case SDLK_DOWN: mVelY += DOT_VEL; break;
+		case SDLK_LEFT: mVelX -= DOT_VEL; break;
+		case SDLK_RIGHT: mVelX += DOT_VEL; break;
+		}
+	}
+	//If a key was released
+	else if (e.type == SDL_KEYUP && e.key.repeat == 0)
+	{
+		//Adjust the velocity
+		switch (e.key.keysym.sym)
+		{
+		case SDLK_UP: mVelY += DOT_VEL; break;
+		case SDLK_DOWN: mVelY -= DOT_VEL; break;
+		case SDLK_LEFT: mVelX += DOT_VEL; break;
+		case SDLK_RIGHT: mVelX -= DOT_VEL; break;
+		}
+	}
 }
 
-/*
-	Update the player
-*/
-void Player::update()
+void Player::move(float timeStep)
 {
-	CCLOG("Updating Player");
-	
-	Player::playerPosition.x++;
+	//Move the dot left or right
+	mPosX += mVelX * timeStep;
 
-	// update the sprite position
-	Player::m_pCharacterSprite->setPosition(Player::playerPosition);
-	
-	// set the players bounding box to its Sprite Bounding box
-	Player::setBoundingBox(m_pCharacterSprite->getBoundingBox());
+	//If the dot went too far to the left or right
+	if (mPosX < 0)
+	{
+		mPosX = 0;
+	}
+	else if (mPosX > SCREEN_WIDTH - DOT_WIDTH)
+	{
+		mPosX = SCREEN_WIDTH - DOT_WIDTH;
+	}
+
+	//Move the dot up or down
+	mPosY += mVelY * timeStep;
+
+	//If the dot went too far up or down
+	if (mPosY < 0)
+	{
+		mPosY = 0;
+	}
+	else if (mPosY > SCREEN_HEIGHT - DOT_HEIGHT)
+	{
+		mPosY = SCREEN_HEIGHT - DOT_HEIGHT;
+	}
 }
 
-
-void Player::cleanUp()
+void Player::renderPlayer()
 {
-#ifdef _DEBUG
-	CCLOG("Player::cleanUp()");
-#endif		
+	//Show the dot	
+	this->render((int)mPosX, (int)mPosY);
 }
+

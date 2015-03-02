@@ -24,3 +24,5 @@ public:
 	void logic();
 	void render();
 };
+
+#endif
