@@ -10,6 +10,17 @@
       <Platform>Win32</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="GameManager.cpp" />
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="Sprite.cpp" />
+    <ClCompile Include="WorldManager.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="GameManager.h" />
+    <ClInclude Include="Sprite.h" />
+    <ClInclude Include="WorldManager.h" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{91A079DC-082B-4E51-AC01-CF71ADF753A3}</ProjectGuid>
     <RootNamespace>Alien_Escape</RootNamespace>
@@ -68,16 +79,6 @@
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
   </ItemDefinitionGroup>
-  <ItemGroup>
-    <ClCompile Include="main.cpp" />
-    <ClCompile Include="Sprite.cpp" />
-    <ClCompile Include="WorldManager.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="Definitions.h" />
-    <ClInclude Include="Sprite.h" />
-    <ClInclude Include="WorldManager.h" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

@@ -53,13 +53,9 @@ bool GameManager::init()
 				}
 			}
 		}
-	}		
+	}
 
-	
 	WorldManager::getInstance()->setRenderer(m_Renderer);
-	// create the player
-	std::shared_ptr<Player> m_pPlayer(new Player());
-
 	return success;
 }
 
@@ -101,12 +97,7 @@ void GameManager::update()
 
 	//Current animation frame
 	int frame = 0;
-		
-	//Keeps track of time between steps
-	Timer stepTimer;
-	
-	// -------------------------------------- GAME LOOP START ---------------------------------
-	
+
 	//While application is running
 	while (!quit)
 	{
@@ -118,33 +109,28 @@ void GameManager::update()
 			{
 				quit = true;
 			}
-
-			//Handle input for the dot
-			m_pPlayer->handleEvent(e);
 		}
 
-		//Calculate time step
-		float timeStep = stepTimer.getTicks() / 1000.f;
-
-		//Move for time step
-		m_pPlayer->move(timeStep);
-
-		//Restart step timer
-		stepTimer.start();
-
 		//Clear screen
-		SDL_SetRenderDrawColor(m_Renderer, 0xFF, 0xFF, 0xFF, 0xFF);
-		SDL_RenderClear(m_Renderer);
+		SDL_SetRenderDrawColor(WorldManager::getInstance()->getRenderer(), 0xFF, 0xFF, 0xFF, 0xFF);
+		SDL_RenderClear(WorldManager::getInstance()->getRenderer());
 
-		//Render dot
-		m_pPlayer->renderPlayer();
+		//Render current frame
+		SDL_Rect* currentClip = &gSpriteClips[frame / 4];
+		playerSpriteSheet.render((SCREEN_WIDTH - currentClip->w) / 2, (SCREEN_HEIGHT - currentClip->h) / 2, currentClip);
 
 		//Update screen
-		SDL_RenderPresent(m_Renderer);
-	}
+		SDL_RenderPresent(WorldManager::getInstance()->getRenderer());
 
-	// -------------------------------------- GAME LOOP END ---------------------------------
-		
+		//Go to next frame
+		++frame;
+
+		//Cycle animation
+		if (frame / 4 >= WALKING_ANIMATION_FRAMES)
+		{
+			frame = 0;
+		}
+	}
 }
 
 bool GameManager::loadMedia()
@@ -153,7 +139,7 @@ bool GameManager::loadMedia()
 	bool success = true;
 
 	//Load sprite sheet texture
-	if (!gSpriteSheetTexture.loadFromFile("textures/foo.png"))
+	if (!playerSpriteSheet.loadFromFile("Sprites/foo.png"))
 	{
 		printf("Failed to load walking animation texture!\n");
 		success = false;
@@ -163,23 +149,23 @@ bool GameManager::loadMedia()
 		//Set sprite clips
 		gSpriteClips[0].x = 0;
 		gSpriteClips[0].y = 0;
-		gSpriteClips[0].w = 64;
-		gSpriteClips[0].h = 205;
+		gSpriteClips[0].w = 32;
+		gSpriteClips[0].h = 103;
 
-		gSpriteClips[1].x = 64;
+		gSpriteClips[1].x = 32;
 		gSpriteClips[1].y = 0;
-		gSpriteClips[1].w = 64;
-		gSpriteClips[1].h = 205;
+		gSpriteClips[1].w = 32;
+		gSpriteClips[1].h = 103;
 
-		gSpriteClips[2].x = 128;
+		gSpriteClips[2].x = 64;
 		gSpriteClips[2].y = 0;
-		gSpriteClips[2].w = 64;
-		gSpriteClips[2].h = 205;
+		gSpriteClips[2].w = 32;
+		gSpriteClips[2].h = 103;
 
-		gSpriteClips[3].x = 196;
+		gSpriteClips[3].x = 96;
 		gSpriteClips[3].y = 0;
-		gSpriteClips[3].w = 64;
-		gSpriteClips[3].h = 205;
+		gSpriteClips[3].w = 32;
+		gSpriteClips[3].h = 103;
 	}
 
 	return success;
@@ -187,15 +173,14 @@ bool GameManager::loadMedia()
 
 void GameManager::cleanUp()
 {
-	//Free loaded images	
-	m_pPlayer->free();	
-	m_pPlayer = NULL;
+	//Free loaded images
+	playerSpriteSheet.free();
 
 	//Destroy window	
 	SDL_DestroyRenderer(m_Renderer);
 	SDL_DestroyWindow(m_Window);
-	m_Window = NULL;
 	m_Renderer = NULL;
+	m_Window = NULL;
 
 	//Quit SDL subsystems
 	IMG_Quit();

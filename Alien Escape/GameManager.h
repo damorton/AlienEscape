@@ -5,20 +5,23 @@
 #include <SDL_image.h>
 #include <vector>
 #include <memory>
+#include "Sprite.h"
 
 class Player;
-class Enemy;
+
+//Walking animation
+const int WALKING_ANIMATION_FRAMES = 4;
 
 class GameManager
 {
 public:	
-	GameManager(){ this->init(); }; 
-	~GameManager(){ this->cleanUp(); }; 
-	bool init(); 	
+	GameManager(){}
+	bool init();
 	bool start();
 	void update(); 
 	bool loadMedia();
-	void cleanUp(); 		
+	void cleanUp(); 	
+		
 private:	
 		
 	//The window we'll be rendering to
@@ -27,8 +30,12 @@ private:
 	//The window renderer
 	SDL_Renderer* m_Renderer = NULL;
 		
+	Sprite playerSpriteSheet;
+
 	// Player
 	std::shared_ptr<Player> m_pPlayer;
+
+	SDL_Rect gSpriteClips[WALKING_ANIMATION_FRAMES];
 };
 
 #endif
