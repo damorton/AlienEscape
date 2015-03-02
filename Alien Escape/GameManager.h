@@ -9,9 +9,6 @@
 
 class Player;
 
-//Walking animation
-const int WALKING_ANIMATION_FRAMES = 4;
-
 class GameManager
 {
 public:	
@@ -20,8 +17,7 @@ public:
 	bool start();
 	void update(); 
 	bool loadMedia();
-	void cleanUp(); 	
-		
+	void cleanUp(); 			
 private:	
 		
 	//The window we'll be rendering to
@@ -30,12 +26,8 @@ private:
 	//The window renderer
 	SDL_Renderer* m_Renderer = NULL;
 		
-	//Sprite m_pPlayer;
-
 	// Player
-	std::shared_ptr<Player> m_pPlayer;
-
-	SDL_Rect gSpriteClips[WALKING_ANIMATION_FRAMES];
+	Player* m_pPlayer;	
 };
 
 #endif

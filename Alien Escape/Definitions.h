@@ -1,6 +1,10 @@
 #ifndef DEFINITIONS_H_
 #define DEFINITIONS_H_
 
+//Screen dimension constants
+#define SCREEN_WIDTH 640
+#define SCREEN_HEIGHT 480
+
 #define XMLDOC "game.xml"
 
 //Game states
@@ -14,9 +18,5 @@ enum GameStates
 	STATE_BLUE_ROOM,
 	STATE_EXIT,
 };
-
-//Screen dimension constants
-#define SCREEN_WIDTH 640
-#define SCREEN_HEIGHT 480
 
 #endif 

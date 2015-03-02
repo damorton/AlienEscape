@@ -4,6 +4,9 @@
 #include <iostream>
 #include "Sprite.h"
 
+//Walking animation
+const int WALKING_ANIMATION_FRAMES = 4;
+
 class Player
 {
 public:
@@ -28,6 +31,7 @@ public:
 	
 	// getters
 	int getState(){ return m_ePlayerState; };
+	Sprite* getSprite(){ return &m_PlayerSprite; };
 
 	// setters 
 	void setState(int state){ m_ePlayerState = (EPlayerState)state; };
@@ -39,8 +43,8 @@ public:
 	void move();
 
 	//Shows the dot on the screen
-	void render(Sprite* playerSprite, SDL_Rect* currentClip);
-
+	void render();
+	
 private:
 	EPlayerState m_ePlayerState; // Player state
 
@@ -49,6 +53,14 @@ private:
 
 	//The velocity of the dot
 	int mVelX, mVelY;
+
+	//Current animation frame
+	int m_nFrame;
+
+	// Animation
+	SDL_Rect gSpriteClips[WALKING_ANIMATION_FRAMES];
+
+	Sprite m_PlayerSprite;
 };
 
 #endif

@@ -4,8 +4,6 @@
 #include "Player.h"
 #include "Timer.h"
 
-Sprite gPlayerSprite;
-
 bool GameManager::init()
 {
 	//Initialization flag
@@ -56,9 +54,8 @@ bool GameManager::init()
 			}
 		}
 	}
-
-	// Create the player
-	std::shared_ptr<Player> m_pPlayer(new Player());
+		
+	m_pPlayer = new Player();
 	WorldManager::getInstance()->setRenderer(m_Renderer);
 	return success;
 }
@@ -96,34 +93,11 @@ bool GameManager::loadMedia()
 	bool success = true;
 
 	//Load sprite sheet texture
-	if (!gPlayerSprite.loadFromFile("Sprites/foo.png"))
+	if (!m_pPlayer->getSprite()->loadFromFile("Sprites/foo.png"))
 	{
 		printf("Failed to load walking animation texture!\n");
 		success = false;
-	}
-	else
-	{
-		//Set sprite clips
-		gSpriteClips[0].x = 0;
-		gSpriteClips[0].y = 0;
-		gSpriteClips[0].w = 32;
-		gSpriteClips[0].h = 103;
-
-		gSpriteClips[1].x = 32;
-		gSpriteClips[1].y = 0;
-		gSpriteClips[1].w = 32;
-		gSpriteClips[1].h = 103;
-
-		gSpriteClips[2].x = 64;
-		gSpriteClips[2].y = 0;
-		gSpriteClips[2].w = 32;
-		gSpriteClips[2].h = 103;
-
-		gSpriteClips[3].x = 96;
-		gSpriteClips[3].y = 0;
-		gSpriteClips[3].w = 32;
-		gSpriteClips[3].h = 103;
-	}
+	}	
 
 	return success;
 }
@@ -136,12 +110,8 @@ void GameManager::update()
 	//Event handler
 	SDL_Event e;
 	
-	// Player
-	Player player;
-
-	//Current animation frame
-	int frame = 0;
-
+	
+		
 	//While application is running
 	while (!quit)
 	{
@@ -154,31 +124,21 @@ void GameManager::update()
 				quit = true;
 			}
 
-			player.handleEvent(e);
+			m_pPlayer->handleEvent(e);
 		}
 
-		player.move();
+		m_pPlayer->move();
 
 		//Clear screen
 		SDL_SetRenderDrawColor(WorldManager::getInstance()->getRenderer(), 0xFF, 0xFF, 0xFF, 0xFF);
 		SDL_RenderClear(WorldManager::getInstance()->getRenderer());
-
-		//Render current frame
-		SDL_Rect* currentClip = &gSpriteClips[frame / 4];
-		//gPlayerSprite.render((SCREEN_WIDTH - currentClip->w) / 2, (SCREEN_HEIGHT - currentClip->h) / 2, currentClip);
-		player.render(&gPlayerSprite, currentClip);
+				
+		m_pPlayer->render();
 
 		//Update screen
 		SDL_RenderPresent(WorldManager::getInstance()->getRenderer());
 
-		//Go to next frame
-		++frame;
-
-		//Cycle animation
-		if (frame / 4 >= WALKING_ANIMATION_FRAMES)
-		{
-			frame = 0;
-		}
+		
 
 	}
 }
@@ -187,7 +147,7 @@ void GameManager::update()
 void GameManager::cleanUp()
 {
 	//Free loaded images
-	gPlayerSprite.free();
+	m_pPlayer->getSprite()->free();
 
 	//Destroy window	
 	SDL_DestroyRenderer(m_Renderer);

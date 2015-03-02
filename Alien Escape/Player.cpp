@@ -13,6 +13,29 @@ bool Player::init()
 	mVelX = 0;
 	mVelY = 0;
 
+	m_nFrame = 0;
+
+	//Set sprite clips
+	gSpriteClips[0].x = 0;
+	gSpriteClips[0].y = 0;
+	gSpriteClips[0].w = 32;
+	gSpriteClips[0].h = 103;
+
+	gSpriteClips[1].x = 32;
+	gSpriteClips[1].y = 0;
+	gSpriteClips[1].w = 32;
+	gSpriteClips[1].h = 103;
+
+	gSpriteClips[2].x = 64;
+	gSpriteClips[2].y = 0;
+	gSpriteClips[2].w = 32;
+	gSpriteClips[2].h = 103;
+
+	gSpriteClips[3].x = 96;
+	gSpriteClips[3].y = 0;
+	gSpriteClips[3].w = 32;
+	gSpriteClips[3].h = 103;
+
 	return true;
 }
 
@@ -67,8 +90,19 @@ void Player::move()
 	}
 }
 
-void Player::render(Sprite* playerSprite, SDL_Rect* currentClip)
+void Player::render()
 {	
-	playerSprite->render((int)mPosX, (int)mPosY, currentClip);
+	//Render current frame
+	SDL_Rect* currentClip = &gSpriteClips[m_nFrame / 4];
+	m_PlayerSprite.render((int)mPosX, (int)mPosY, currentClip);
+	
+	//Go to next frame
+	++m_nFrame;
+
+	//Cycle animation
+	if (m_nFrame / 4 >= WALKING_ANIMATION_FRAMES)
+	{
+		m_nFrame = 0;
+	}
 }
 
