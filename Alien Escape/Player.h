@@ -47,6 +47,7 @@ private:
 	int m_VelX;
 	int m_VelY;
 	int m_nFrame;
+	int spriteAnimationSpeed;
 	SDL_Rect gSpriteClips[WALKING_ANIMATION_FRAMES];
 	Sprite m_PlayerSprite;
 };

@@ -6,14 +6,15 @@
 bool Player::init()
 {		
 	//Initialize the offsets
-	m_PosX = 0;
-	m_PosY = 0;
+	m_PosX = SCREEN_WIDTH * .25;
+	m_PosY = SCREEN_HEIGHT - m_PlayerSprite.getHeight();
 
 	//Initialize the velocity
 	m_VelX = 0;
 	m_VelY = 0;
 
 	m_nFrame = 0;
+	spriteAnimationSpeed = 4;
 	
 	//Set sprite clips
 	gSpriteClips[0].x = 0;
@@ -49,8 +50,8 @@ void Player::handleEvent(SDL_Event& e)
 		{
 		case SDLK_UP: m_VelY -= maxVelocity; break;
 		case SDLK_DOWN: m_VelY += maxVelocity; break;
-		case SDLK_LEFT: m_VelX -= maxVelocity; break;
-		case SDLK_RIGHT: m_VelX += maxVelocity; break;
+		//case SDLK_LEFT: m_VelX -= maxVelocity; break;
+		//case SDLK_RIGHT: m_VelX += maxVelocity; break;
 		}
 	}
 	//If a key was released
@@ -61,8 +62,8 @@ void Player::handleEvent(SDL_Event& e)
 		{
 		case SDLK_UP: m_VelY += maxVelocity; break;
 		case SDLK_DOWN: m_VelY -= maxVelocity; break;
-		case SDLK_LEFT: m_VelX += maxVelocity; break;
-		case SDLK_RIGHT: m_VelX -= maxVelocity; break;
+		//case SDLK_LEFT: m_VelX += maxVelocity; break;
+		//case SDLK_RIGHT: m_VelX -= maxVelocity; break;
 		}
 	}
 }
@@ -71,7 +72,7 @@ void Player::move(float timeStep)
 {
 	//Move the dot left or right
 	m_PosX += m_VelX * timeStep;
-
+		
 	//If the dot went too far to the left or right
 	if (m_PosX < 0)
 	{
@@ -81,7 +82,7 @@ void Player::move(float timeStep)
 	{
 		m_PosX = SCREEN_WIDTH - m_PlayerSprite.getWidth() / WALKING_ANIMATION_FRAMES;
 	}
-
+	
 	//Move the dot up or down
 	m_PosY += m_VelY * timeStep;
 
@@ -94,19 +95,20 @@ void Player::move(float timeStep)
 	{
 		m_PosY = SCREEN_HEIGHT - m_PlayerSprite.getHeight();
 	}
+	
 }
 
 void Player::render()
 {	
 	//Render current frame
-	SDL_Rect* currentClip = &gSpriteClips[m_nFrame / 4];
+	SDL_Rect* currentClip = &gSpriteClips[m_nFrame / spriteAnimationSpeed];
 	m_PlayerSprite.render((int)m_PosX, (int)m_PosY, currentClip);
 	
 	//Go to next frame
 	++m_nFrame;
 
 	//Cycle animation
-	if (m_nFrame / 4 >= WALKING_ANIMATION_FRAMES)
+	if (m_nFrame / spriteAnimationSpeed >= WALKING_ANIMATION_FRAMES)
 	{
 		m_nFrame = 0;
 	}
