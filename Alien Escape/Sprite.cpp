@@ -1,5 +1,6 @@
 #include "Sprite.h"
 #include "WorldManager.h"
+#include <SDL_image.h>
 
 Sprite::Sprite()
 {
@@ -53,6 +54,41 @@ bool Sprite::loadFromFile(std::string path)
 
 	//Return success
 	mTexture = newTexture;
+	return mTexture != NULL;
+}
+
+bool Sprite::loadFromRenderedText(std::string textureText, SDL_Color textColor, TTF_Font* gFont)
+{	
+	//Get rid of preexisting texture
+	free();
+
+	//Render text surface
+	SDL_Surface* textSurface = TTF_RenderText_Solid(gFont, textureText.c_str(), textColor);
+	if (textSurface != NULL)
+	{
+		//Create texture from surface pixels
+		mTexture = SDL_CreateTextureFromSurface(WorldManager::getInstance()->getRenderer(), textSurface);
+		if (mTexture == NULL)
+		{
+			printf("Unable to create texture from rendered text! SDL Error: %s\n", SDL_GetError());
+		}
+		else
+		{
+			//Get image dimensions
+			mWidth = textSurface->w;
+			mHeight = textSurface->h;
+		}
+
+		//Get rid of old surface
+		SDL_FreeSurface(textSurface);
+	}
+	else
+	{
+		printf("Unable to render text surface! SDL_ttf Error: %s\n", TTF_GetError());
+	}
+
+
+	//Return success
 	return mTexture != NULL;
 }
 
@@ -110,4 +146,9 @@ int Sprite::getWidth()
 int Sprite::getHeight()
 {
 	return mHeight;
+}
+
+void Sprite::cleanup()
+{
+	
 }

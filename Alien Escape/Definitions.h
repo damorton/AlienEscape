@@ -10,6 +10,8 @@
 #define SCREEN_FPS 60
 #define SCREEN_TICK_PER_FRAME (1000 / SCREEN_FPS)
 
+#define PADDING 5
+
 enum Gravity
 {
 	GRAVITY_UP,

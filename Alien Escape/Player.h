@@ -41,6 +41,8 @@ public:
 
 	//Shows the dot on the screen
 	void render();
+
+	int getDistance(){ return distanceScore; };
 	
 private:
 	EPlayerState m_ePlayerState; 
@@ -55,6 +57,9 @@ private:
 	bool m_bIsJumping;
 	float m_fDeltaTime;
 	int m_nNumberOfJumps;
+
+	int distance;
+	int distanceScore;
 };
 
 #endif

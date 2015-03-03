@@ -99,9 +99,7 @@ void Player::jump()
 
 void Player::move(float timeStep)
 {
-	m_fDeltaTime = timeStep;
-	std::cout << "delta time: " << m_fDeltaTime << std::endl;
-	std::cout << "player velocity: " << m_VelY << std::endl;
+	m_fDeltaTime = timeStep;	
 	/*
 	//Move the dot left or right
 	m_PosX += m_VelX * timeStep;
@@ -152,6 +150,10 @@ void Player::move(float timeStep)
 		WorldManager::getInstance()->flipGravity();
 		m_nNumberOfJumps = 0;
 	}
+
+	// Distance
+	distance++;
+	distanceScore = distance / SCREEN_FPS;
 }
 
 void Player::render()
