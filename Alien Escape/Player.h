@@ -42,6 +42,7 @@ private:
 	int m_nNumberOfJumps;
 	int m_nDistance;
 	int m_nDistanceScore;
+	// reminder: release resources in cleanup
 };
 
 #endif

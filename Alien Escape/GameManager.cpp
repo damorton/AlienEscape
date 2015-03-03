@@ -204,7 +204,7 @@ void GameManager::cleanUp()
 	m_GravityTextTexture.free();
 	m_DistanceTextTexture.free();
 
-	// Delete Player
+	// Delete Player	
 	delete m_pPlayer;
 	m_pPlayer = NULL;
 

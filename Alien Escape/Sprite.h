@@ -11,7 +11,6 @@ class Sprite
 public:
 	Sprite();
 	~Sprite();
-	void cleanup();
 	bool loadFromFile(std::string path);
 	bool loadFromRenderedText(std::string textureText, SDL_Color textColor, TTF_Font* gFont);
 	void free();
@@ -25,6 +24,7 @@ private:
 	SDL_Texture* mTexture;
 	int mWidth;
 	int mHeight;
+	// reminder: release resources in cleanup
 };
 
 #endif 

@@ -22,5 +22,6 @@ private:
 	SDL_Renderer* m_pRenderer;	
 	Gravity gravityDirection;
 	SDL_RendererFlip m_RendererFlip;
+	// reminder: release resources in cleanup
 };
 #endif

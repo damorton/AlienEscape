@@ -31,12 +31,11 @@ private:
 	Sprite m_FPSTextTexture;
 	float avgFPS;	
 	std::stringstream fpsText;
-
 	Sprite m_GravityTextTexture;
 	std::stringstream gravityText;
-
 	Sprite m_DistanceTextTexture;	
 	std::stringstream distanceText;
+	// reminder: release resources in cleanup
 };
 
 #endif

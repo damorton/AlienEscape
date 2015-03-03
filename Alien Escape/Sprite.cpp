@@ -114,8 +114,3 @@ int Sprite::getHeight()
 {
 	return mHeight;
 }
-
-void Sprite::cleanup()
-{
-	
-}
