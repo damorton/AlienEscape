@@ -6,15 +6,15 @@
 bool Player::init()
 {		
 	//Initialize the offsets
-	mPosX = 0;
-	mPosY = 0;
+	m_PosX = 0;
+	m_PosY = 0;
 
 	//Initialize the velocity
-	mVelX = 0;
-	mVelY = 0;
+	m_VelX = 0;
+	m_VelY = 0;
 
 	m_nFrame = 0;
-
+	
 	//Set sprite clips
 	gSpriteClips[0].x = 0;
 	gSpriteClips[0].y = 0;
@@ -47,10 +47,10 @@ void Player::handleEvent(SDL_Event& e)
 		//Adjust the velocity
 		switch (e.key.keysym.sym)
 		{
-		case SDLK_UP: mVelY -= DOT_VEL; break;
-		case SDLK_DOWN: mVelY += DOT_VEL; break;
-		case SDLK_LEFT: mVelX -= DOT_VEL; break;
-		case SDLK_RIGHT: mVelX += DOT_VEL; break;
+		case SDLK_UP: m_VelY -= maxVelocity; break;
+		case SDLK_DOWN: m_VelY += maxVelocity; break;
+		case SDLK_LEFT: m_VelX -= maxVelocity; break;
+		case SDLK_RIGHT: m_VelX += maxVelocity; break;
 		}
 	}
 	//If a key was released
@@ -59,34 +59,40 @@ void Player::handleEvent(SDL_Event& e)
 		//Adjust the velocity
 		switch (e.key.keysym.sym)
 		{
-		case SDLK_UP: mVelY += DOT_VEL; break;
-		case SDLK_DOWN: mVelY -= DOT_VEL; break;
-		case SDLK_LEFT: mVelX += DOT_VEL; break;
-		case SDLK_RIGHT: mVelX -= DOT_VEL; break;
+		case SDLK_UP: m_VelY += maxVelocity; break;
+		case SDLK_DOWN: m_VelY -= maxVelocity; break;
+		case SDLK_LEFT: m_VelX += maxVelocity; break;
+		case SDLK_RIGHT: m_VelX -= maxVelocity; break;
 		}
 	}
 }
 
-void Player::move()
+void Player::move(float timeStep)
 {
 	//Move the dot left or right
-	mPosX += mVelX;
+	m_PosX += m_VelX * timeStep;
 
 	//If the dot went too far to the left or right
-	if ((mPosX < 0) || (mPosX + DOT_WIDTH > SCREEN_WIDTH))
+	if (m_PosX < 0)
 	{
-		//Move back
-		mPosX -= mVelX;
+		m_PosX = 0;
+	}
+	else if (m_PosX > SCREEN_WIDTH - m_PlayerSprite.getWidth() / WALKING_ANIMATION_FRAMES)
+	{
+		m_PosX = SCREEN_WIDTH - m_PlayerSprite.getWidth() / WALKING_ANIMATION_FRAMES;
 	}
 
 	//Move the dot up or down
-	mPosY += mVelY;
+	m_PosY += m_VelY * timeStep;
 
 	//If the dot went too far up or down
-	if ((mPosY < 0) || (mPosY + DOT_HEIGHT > SCREEN_HEIGHT))
+	if (m_PosY < 0)
 	{
-		//Move back
-		mPosY -= mVelY;
+		m_PosY = 0;
+	}
+	else if (m_PosY > SCREEN_HEIGHT - m_PlayerSprite.getHeight())
+	{
+		m_PosY = SCREEN_HEIGHT - m_PlayerSprite.getHeight();
 	}
 }
 
@@ -94,7 +100,7 @@ void Player::render()
 {	
 	//Render current frame
 	SDL_Rect* currentClip = &gSpriteClips[m_nFrame / 4];
-	m_PlayerSprite.render((int)mPosX, (int)mPosY, currentClip);
+	m_PlayerSprite.render((int)m_PosX, (int)m_PosY, currentClip);
 	
 	//Go to next frame
 	++m_nFrame;
@@ -104,5 +110,10 @@ void Player::render()
 	{
 		m_nFrame = 0;
 	}
+}
+
+void Player::cleanUp()
+{		
+	m_PlayerSprite.free();	
 }
 

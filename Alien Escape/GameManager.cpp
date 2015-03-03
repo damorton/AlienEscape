@@ -109,9 +109,9 @@ void GameManager::update()
 
 	//Event handler
 	SDL_Event e;
-	
-	
-		
+			
+	Timer timer;
+
 	//While application is running
 	while (!quit)
 	{
@@ -127,27 +127,32 @@ void GameManager::update()
 			m_pPlayer->handleEvent(e);
 		}
 
-		m_pPlayer->move();
+		//Calculate time step
+		float timeStep = timer.getTicks() / 1000.f;
+
+		// Move for timestep
+		m_pPlayer->move(timeStep);
+
+		// Restart timer
+		timer.start();
 
 		//Clear screen
 		SDL_SetRenderDrawColor(WorldManager::getInstance()->getRenderer(), 0xFF, 0xFF, 0xFF, 0xFF);
 		SDL_RenderClear(WorldManager::getInstance()->getRenderer());
 				
+		// Render the player
 		m_pPlayer->render();
 
 		//Update screen
 		SDL_RenderPresent(WorldManager::getInstance()->getRenderer());
-
-		
-
 	}
 }
 
 
 void GameManager::cleanUp()
 {
-	//Free loaded images
-	m_pPlayer->getSprite()->free();
+	delete m_pPlayer;
+	m_pPlayer = NULL;
 
 	//Destroy window	
 	SDL_DestroyRenderer(m_Renderer);
