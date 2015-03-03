@@ -11,7 +11,14 @@ WorldManager* WorldManager::getInstance()
 
 bool WorldManager::init()
 {	
+	gravityDirection = GRAVITY_DOWN;
 	return true;
+}
+
+void WorldManager::flipGravity()
+{
+	if (gravityDirection == GRAVITY_DOWN) gravityDirection = GRAVITY_UP;
+	else if (gravityDirection == GRAVITY_UP) gravityDirection = GRAVITY_DOWN;
 }
 
 void WorldManager::cleanUp()

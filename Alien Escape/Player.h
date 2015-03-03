@@ -3,14 +3,18 @@
 
 #include <iostream>
 #include "Sprite.h"
+#include "SDL.h"
 
 //Walking animation
-const int WALKING_ANIMATION_FRAMES = 4;
+#define WALKING_ANIMATION_FRAMES 4
+
+#define GRAVITY 60
+#define MAX_JUMP_VELOCITY 1500
 
 class Player
 {
 public:
-	typedef enum { ALIVE, DEAD, BOOSTING, JUMPING } EPlayerState; // player state
+	typedef enum { ALIVE, DEAD } EPlayerState; // player state
 	Player(){ this->init(); };
 	virtual ~Player(){ this->cleanUp(); };
 	bool init();
@@ -20,10 +24,8 @@ public:
 	int maxVelocity = 640;
 	
 	// Player actions
-	void jump(){ std::cout << "Player jumping" << std::endl; }; // jump
-	void duck(){ std::cout << "Player ducking" << std::endl; }; // duck
-	void boost(){ std::cout << "Player boosting" << std::endl; }; // boost
-	
+	void jump();
+		
 	// Player state
 	void setState(int state){ m_ePlayerState = (EPlayerState)state; };
 	int getState(){ return m_ePlayerState; };
@@ -50,6 +52,9 @@ private:
 	int spriteAnimationSpeed;
 	SDL_Rect gSpriteClips[WALKING_ANIMATION_FRAMES];
 	Sprite m_PlayerSprite;
+	bool m_bIsJumping;
+	float m_fDeltaTime;
+	int m_nNumberOfJumps;
 };
 
 #endif

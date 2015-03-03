@@ -7,6 +7,15 @@
 
 #define XMLDOC "game.xml"
 
+#define SCREEN_FPS 60
+#define SCREEN_TICK_PER_FRAME (1000 / SCREEN_FPS)
+
+enum Gravity
+{
+	GRAVITY_UP,
+	GRAVITY_DOWN
+};
+
 //Game states
 enum GameStates
 {

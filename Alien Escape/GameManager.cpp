@@ -109,12 +109,25 @@ void GameManager::update()
 
 	//Event handler
 	SDL_Event e;
-			
+	
+	//The frames per second timer
+	Timer fpsTimer;
+
+	//The frames per second cap timer
+	Timer capTimer;
+
+	//Start counting frames per second
+	int countedFrames = 0;
+	fpsTimer.start();
+
 	Timer timer;
 
 	//While application is running
 	while (!quit)
 	{
+		//Start cap timer
+		capTimer.start();
+
 		//Handle events on queue
 		while (SDL_PollEvent(&e) != 0)
 		{
@@ -125,6 +138,13 @@ void GameManager::update()
 			}
 
 			m_pPlayer->handleEvent(e);
+		}
+
+		//Calculate and correct fps
+		float avgFPS = countedFrames / (fpsTimer.getTicks() / 1000.f);
+		if (avgFPS > 2000000)
+		{
+			avgFPS = 0;
 		}
 
 		//Calculate time step
@@ -145,6 +165,16 @@ void GameManager::update()
 
 		//Update screen
 		SDL_RenderPresent(WorldManager::getInstance()->getRenderer());
+
+		++countedFrames;
+
+		//If frame finished early
+		int frameTicks = capTimer.getTicks();
+		if (frameTicks < SCREEN_TICK_PER_FRAME)
+		{
+			//Wait remaining time
+			SDL_Delay(SCREEN_TICK_PER_FRAME - frameTicks);
+		}
 	}
 }
 

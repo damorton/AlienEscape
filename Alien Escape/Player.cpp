@@ -2,7 +2,7 @@
 #include "Player.h"
 #include "Definitions.h"
 #include "GameManager.h"
-
+#include "WorldManager.h"
 bool Player::init()
 {		
 	//Initialize the offsets
@@ -37,19 +37,30 @@ bool Player::init()
 	gSpriteClips[3].w = 32;
 	gSpriteClips[3].h = 103;
 
+	m_bIsJumping = false;
+	m_fDeltaTime = 0;
+	m_nNumberOfJumps = 0;
 	return true;
 }
 
 void Player::handleEvent(SDL_Event& e)
-{
+{	
+	//If a key was pressed
+	if (e.type == SDL_KEYDOWN && e.key.repeat == 0)
+	{
+		if (WorldManager::getInstance()->getGravityDirection() == GRAVITY_DOWN && e.key.keysym.sym == SDLK_UP) this->jump();
+		else if (WorldManager::getInstance()->getGravityDirection() == GRAVITY_UP && e.key.keysym.sym == SDLK_DOWN) this->jump();
+	}
+	/*
 	//If a key was pressed
 	if (e.type == SDL_KEYDOWN && e.key.repeat == 0)
 	{
 		//Adjust the velocity
 		switch (e.key.keysym.sym)
 		{
-		case SDLK_UP: m_VelY -= maxVelocity; break;
-		case SDLK_DOWN: m_VelY += maxVelocity; break;
+		//case SDLK_UP: m_VelY -= maxVelocity; break;
+		case SDLK_UP: this->jump(); break;
+		//case SDLK_DOWN: m_VelY += maxVelocity; break;
 		//case SDLK_LEFT: m_VelX -= maxVelocity; break;
 		//case SDLK_RIGHT: m_VelX += maxVelocity; break;
 		}
@@ -60,16 +71,38 @@ void Player::handleEvent(SDL_Event& e)
 		//Adjust the velocity
 		switch (e.key.keysym.sym)
 		{
-		case SDLK_UP: m_VelY += maxVelocity; break;
-		case SDLK_DOWN: m_VelY -= maxVelocity; break;
+		//case SDLK_UP: m_VelY += maxVelocity; break;
+		//case SDLK_DOWN: m_VelY -= maxVelocity; break;
 		//case SDLK_LEFT: m_VelX += maxVelocity; break;
 		//case SDLK_RIGHT: m_VelX -= maxVelocity; break;
+		}
+	}
+	*/
+}
+
+void Player::jump()
+{
+	if (!m_bIsJumping)
+	{
+		m_nNumberOfJumps++;
+		m_bIsJumping = true;
+		if (WorldManager::getInstance()->getGravityDirection() == GRAVITY_DOWN)
+		{
+			m_VelY -= MAX_JUMP_VELOCITY;			
+		}
+		else
+		{		
+			m_VelY += MAX_JUMP_VELOCITY;		
 		}
 	}
 }
 
 void Player::move(float timeStep)
 {
+	m_fDeltaTime = timeStep;
+	std::cout << "delta time: " << m_fDeltaTime << std::endl;
+	std::cout << "player velocity: " << m_VelY << std::endl;
+	/*
 	//Move the dot left or right
 	m_PosX += m_VelX * timeStep;
 		
@@ -82,7 +115,8 @@ void Player::move(float timeStep)
 	{
 		m_PosX = SCREEN_WIDTH - m_PlayerSprite.getWidth() / WALKING_ANIMATION_FRAMES;
 	}
-	
+	*/
+
 	//Move the dot up or down
 	m_PosY += m_VelY * timeStep;
 
@@ -90,12 +124,34 @@ void Player::move(float timeStep)
 	if (m_PosY < 0)
 	{
 		m_PosY = 0;
+		m_bIsJumping = false;
+		m_VelY = 0;
 	}
 	else if (m_PosY > SCREEN_HEIGHT - m_PlayerSprite.getHeight())
 	{
 		m_PosY = SCREEN_HEIGHT - m_PlayerSprite.getHeight();
+		m_bIsJumping = false;
+		m_VelY = 0;
 	}
-	
+
+	// Gravity
+	if (m_bIsJumping)
+	{
+		if (WorldManager::getInstance()->getGravityDirection() == GRAVITY_DOWN)
+		{
+			m_VelY += GRAVITY;
+		}
+		else
+		{
+			m_VelY -= GRAVITY;
+		}		
+	}
+
+	if (m_nNumberOfJumps > 3)
+	{
+		WorldManager::getInstance()->flipGravity();
+		m_nNumberOfJumps = 0;
+	}
 }
 
 void Player::render()
