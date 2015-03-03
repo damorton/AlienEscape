@@ -6,10 +6,7 @@
 
 bool GameManager::init()
 {
-	//Initialization flag
 	bool success = true;
-
-	//Initialize SDL
 	if (SDL_Init(SDL_INIT_VIDEO) < 0)
 	{
 		printf("SDL could not initialize! SDL Error: %s\n", SDL_GetError());
@@ -17,13 +14,10 @@ bool GameManager::init()
 	}
 	else
 	{
-		//Set texture filtering to linear
 		if (!SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1"))
 		{
 			printf("Warning: Linear texture filtering not enabled!");
 		}
-
-		//Create window
 		m_Window = SDL_CreateWindow("Alien Escape", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
 		if (m_Window == NULL)
 		{
@@ -32,7 +26,6 @@ bool GameManager::init()
 		}
 		else
 		{
-			//Create vsynced renderer for window
 			m_Renderer = SDL_CreateRenderer(m_Window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
 			if (m_Renderer == NULL)
 			{
@@ -41,10 +34,8 @@ bool GameManager::init()
 			}
 			else
 			{
-				//Initialize renderer color
+				// PNG images
 				SDL_SetRenderDrawColor(m_Renderer, 0xFF, 0xFF, 0xFF, 0xFF);
-
-				//Initialize PNG loading
 				int imgFlags = IMG_INIT_PNG;
 				if (!(IMG_Init(imgFlags) & imgFlags))
 				{
@@ -52,7 +43,7 @@ bool GameManager::init()
 					success = false;
 				}	
 
-				//Initialize SDL_ttf
+				// Truetype Fonts
 				if (TTF_Init() == -1)
 				{
 					printf("SDL_ttf could not initialize! SDL_ttf Error: %s\n", TTF_GetError());
@@ -72,14 +63,12 @@ bool GameManager::init()
 
 bool GameManager::start()
 {
-	//Start up SDL and create window
 	if (!init())
 	{
 		printf("Failed to initialize!\n");
 	}
 	else
 	{
-		//Load media
 		if (!loadMedia())
 		{
 			printf("Failed to load media!\n");
@@ -90,117 +79,82 @@ bool GameManager::start()
 			this->update();
 		}
 	}
-
-	//Free resources and close SDL
 	this->cleanUp();
-
 	return 0;
 }
 
 bool GameManager::loadMedia()
 {
-	//Loading success flag
 	bool success = true;
 
-	//Load sprite sheet texture
+	// Sprites
 	if (!m_pPlayer->getSprite()->loadFromFile("Sprites/foo.png"))
 	{
 		printf("Failed to load walking animation texture!\n");
 		success = false;
 	}	
 
-	//Open the font
+	// Fonts
 	m_Font = TTF_OpenFont("Fonts/lazy.ttf", 28);
 	if (m_Font == NULL)
 	{
 		printf("Failed to load lazy font! SDL_ttf Error: %s\n", TTF_GetError());
 		success = false;
-	}
-	
+	}	
 	return success;
 }
 
 void GameManager::update()
 {	
-	//Main loop flag
 	bool quit = false;
-
-	//Event handler
-	SDL_Event e;
-	
-	this->initDebug();
-
-	//The frames per second timer
+	SDL_Event e;			
 	Timer fpsTimer;
-
-	//The frames per second cap timer
 	Timer capTimer;
-	
-	//Start counting frames per second
-	int countedFrames = 0;
-	fpsTimer.start();
-
 	Timer deltaTimer;
+	fpsTimer.start();	
+	int countedFrames = 0;	
+	if (DEBUG) this->initDebug();
 
-	//While application is running
+	// -------------------- GAME LOOP START --------------------
 	while (!quit)
 	{
-		//Start cap Timer
-		capTimer.start();
-
-		// -------------------- INPUT --------------------
-		//Handle events on queue
+		// -------------------- INPUT --------------------		
+		capTimer.start();				
 		while (SDL_PollEvent(&e) != 0)
-		{
-			//User requests quit
+		{			
 			if (e.type == SDL_QUIT)
 			{
 				quit = true;
 			}
-
 			m_pPlayer->handleEvent(e);
-		}
+		}	
 
-		//Calculate and correct fps
+		// -------------------- LOGIC --------------------
 		avgFPS = countedFrames / (fpsTimer.getTicks() / 1000.f);
 		if (avgFPS > 2000000)
 		{
 			avgFPS = 0;
 		}
-		
-		//Calculate time step
 		float timeStep = deltaTimer.getTicks() / 1000.f;
-		
-		// -------------------- LOGIC --------------------
-		// Move for timestep
 		m_pPlayer->move(timeStep);
-
-		// Restart timer
 		deltaTimer.start();
 
 		// -------------------- RENDER --------------------
-		//Clear screen
 		SDL_SetRenderDrawColor(WorldManager::getInstance()->getRenderer(), 0xFF, 0xFF, 0xFF, 0xFF);
-		SDL_RenderClear(WorldManager::getInstance()->getRenderer());
-		
-		this->renderDebug();		
-
-		// Render the player
+		SDL_RenderClear(WorldManager::getInstance()->getRenderer());		
+		if (DEBUG) this->renderDebug();
 		m_pPlayer->render();
-
-		//Update screen
 		SDL_RenderPresent(WorldManager::getInstance()->getRenderer());
 
+		// -------------------- DELAY --------------------
 		++countedFrames;
-
-		//If frame finished early
 		int frameTicks = capTimer.getTicks();
 		if (frameTicks < SCREEN_TICK_PER_FRAME)
 		{
-			//Wait remaining time
 			SDL_Delay(SCREEN_TICK_PER_FRAME - frameTicks);
 		}
 	}
+	// -------------------- GAME LOOP END --------------------
 }
 
 void GameManager::initDebug()

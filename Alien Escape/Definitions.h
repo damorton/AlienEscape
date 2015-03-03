@@ -4,13 +4,11 @@
 //Screen dimension constants
 #define SCREEN_WIDTH 640
 #define SCREEN_HEIGHT 480
-
 #define XMLDOC "game.xml"
-
 #define SCREEN_FPS 60
 #define SCREEN_TICK_PER_FRAME (1000 / SCREEN_FPS)
-
 #define PADDING 5
+#define DEBUG 0
 
 enum Gravity
 {

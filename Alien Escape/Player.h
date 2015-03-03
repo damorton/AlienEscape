@@ -8,8 +8,8 @@
 //Walking animation
 #define WALKING_ANIMATION_FRAMES 4
 
-#define GRAVITY 60
-#define MAX_JUMP_VELOCITY 1500
+#define GRAVITY 100
+#define MAX_JUMP_VELOCITY 1700
 
 class Player
 {
@@ -18,32 +18,15 @@ public:
 	Player(){ this->init(); };
 	virtual ~Player(){ this->cleanUp(); };
 	bool init();
-	void cleanUp();	
-			
-	// Max velocity
-	int maxVelocity = 640;
-	
-	// Player actions
-	void jump();
-		
-	// Player state
-	void setState(int state){ m_ePlayerState = (EPlayerState)state; };
-	int getState(){ return m_ePlayerState; };
-	
-	// Player sprite
-	Sprite* getSprite(){ return &m_PlayerSprite; };
-			
-	//Takes key presses and adjusts the dot's velocity
-	void handleEvent(SDL_Event& e);
-
-	//Moves the dot
-	void move(float timeStep);
-
-	//Shows the dot on the screen
+	void cleanUp();		
+	void handleEvent(SDL_Event& e);	
+	void move(float timeStep);	
 	void render();
-
-	int getDistance(){ return distanceScore; };
-	
+	void jump();		
+	int getState(){ return m_ePlayerState; };	
+	Sprite* getSprite(){ return &m_PlayerSprite; };
+	int getDistance(){ return m_nDistanceScore; };
+	void setState(int state){ m_ePlayerState = (EPlayerState)state; };	
 private:
 	EPlayerState m_ePlayerState; 
 	int m_PosX;
@@ -57,9 +40,8 @@ private:
 	bool m_bIsJumping;
 	float m_fDeltaTime;
 	int m_nNumberOfJumps;
-
-	int distance;
-	int distanceScore;
+	int m_nDistance;
+	int m_nDistanceScore;
 };
 
 #endif

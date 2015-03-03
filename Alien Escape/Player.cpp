@@ -152,8 +152,8 @@ void Player::move(float timeStep)
 	}
 
 	// Distance
-	distance++;
-	distanceScore = distance / SCREEN_FPS;
+	m_nDistance++;
+	m_nDistanceScore = m_nDistance / SCREEN_FPS;
 }
 
 void Player::render()
