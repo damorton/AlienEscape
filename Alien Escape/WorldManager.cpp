@@ -12,13 +12,22 @@ WorldManager* WorldManager::getInstance()
 bool WorldManager::init()
 {	
 	gravityDirection = GRAVITY_DOWN;
+	m_RendererFlip = SDL_FLIP_NONE;
 	return true;
 }
 
 void WorldManager::flipGravity()
 {
-	if (gravityDirection == GRAVITY_DOWN) gravityDirection = GRAVITY_UP;
-	else if (gravityDirection == GRAVITY_UP) gravityDirection = GRAVITY_DOWN;
+	if (gravityDirection == GRAVITY_DOWN)
+	{
+		gravityDirection = GRAVITY_UP;
+		m_RendererFlip = SDL_FLIP_VERTICAL;
+	}
+	else if (gravityDirection == GRAVITY_UP)
+	{
+		gravityDirection = GRAVITY_DOWN;
+		m_RendererFlip = SDL_FLIP_NONE;
+	}	
 }
 
 void WorldManager::cleanUp()

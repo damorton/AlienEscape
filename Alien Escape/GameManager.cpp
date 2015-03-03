@@ -55,7 +55,10 @@ bool GameManager::init()
 		}
 	}
 		
+	// Create player
 	m_pPlayer = new Player();
+
+	// Store
 	WorldManager::getInstance()->setRenderer(m_Renderer);
 	return success;
 }

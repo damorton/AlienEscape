@@ -6,7 +6,7 @@
 bool Player::init()
 {		
 	//Initialize the offsets
-	m_PosX = SCREEN_WIDTH * .25;
+	m_PosX = SCREEN_WIDTH * .10;
 	m_PosY = SCREEN_HEIGHT - m_PlayerSprite.getHeight();
 
 	//Initialize the velocity
@@ -158,7 +158,7 @@ void Player::render()
 {	
 	//Render current frame
 	SDL_Rect* currentClip = &gSpriteClips[m_nFrame / spriteAnimationSpeed];
-	m_PlayerSprite.render((int)m_PosX, (int)m_PosY, currentClip);
+	m_PlayerSprite.render((int)m_PosX, (int)m_PosY, currentClip,NULL, NULL, WorldManager::getInstance()->getRendererFlip());
 	
 	//Go to next frame
 	++m_nFrame;
