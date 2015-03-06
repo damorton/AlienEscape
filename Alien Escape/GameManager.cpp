@@ -106,14 +106,14 @@ bool GameManager::loadMedia()
 
 void GameManager::update()
 {	
+	if (DEBUG) this->initDebug();
 	bool quit = false;
 	SDL_Event e;			
 	Timer fpsTimer;
 	Timer capTimer;
 	Timer deltaTimer;
 	fpsTimer.start();	
-	int countedFrames = 0;	
-	if (DEBUG) this->initDebug();
+	int countedFrames = 0;		
 
 	// -------------------- GAME LOOP START --------------------
 	while (!quit)
@@ -140,14 +140,14 @@ void GameManager::update()
 		deltaTimer.start();
 
 		// -------------------- RENDER --------------------
-		SDL_SetRenderDrawColor(WorldManager::getInstance()->getRenderer(), 0xFF, 0xFF, 0xFF, 0xFF);
-		SDL_RenderClear(WorldManager::getInstance()->getRenderer());		
 		if (DEBUG) this->renderDebug();
+		SDL_SetRenderDrawColor(WorldManager::getInstance()->getRenderer(), 0xFF, 0xFF, 0xFF, 0xFF);
+		SDL_RenderClear(WorldManager::getInstance()->getRenderer());				
 		m_pPlayer->render();
 		SDL_RenderPresent(WorldManager::getInstance()->getRenderer());
-
-		// -------------------- DELAY --------------------
 		++countedFrames;
+		
+		// -------------------- DELAY --------------------
 		int frameTicks = capTimer.getTicks();
 		if (frameTicks < SCREEN_TICK_PER_FRAME)
 		{
