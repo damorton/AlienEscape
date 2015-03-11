@@ -101,13 +101,27 @@ bool GameManager::loadMedia()
 		printf("Failed to load lazy font! SDL_ttf Error: %s\n", TTF_GetError());
 		success = false;
 	}	
+
+	//Load background texture
+	if (!m_BackgroundA.loadFromFile("Backgrounds/BackgroundA.png"))
+	{
+		printf("Failed to load background texture!\n");
+		success = false;
+	}
+	if (!m_BackgroundB.loadFromFile("Backgrounds/BackgroundB.png"))
+	{
+		printf("Failed to load background texture!\n");
+		success = false;
+	}
+
 	return success;
 }
 
 void GameManager::update()
 {	
 	bool quit = false;
-	SDL_Event e;			
+	SDL_Event e;
+	int scrollingOffset = 0;
 	Timer fpsTimer;
 	Timer capTimer;
 	Timer deltaTimer;
@@ -139,10 +153,21 @@ void GameManager::update()
 		m_pPlayer->move(timeStep);
 		deltaTimer.start();
 
+		//Scroll background
+		--scrollingOffset;
+		if (scrollingOffset < -m_BackgroundA.getWidth())
+		{
+			scrollingOffset = 0;
+		}
+
 		// -------------------- RENDER --------------------
 		SDL_SetRenderDrawColor(WorldManager::getInstance()->getRenderer(), 0xFF, 0xFF, 0xFF, 0xFF);
 		SDL_RenderClear(WorldManager::getInstance()->getRenderer());		
-		
+				
+		// Render background
+		m_BackgroundA.render(scrollingOffset, 0);
+		m_BackgroundB.render(scrollingOffset + m_BackgroundB.getWidth(), 0);
+
 		if (DEBUG) this->renderDebug();
 		m_pPlayer->render();
 		SDL_RenderPresent(WorldManager::getInstance()->getRenderer());
@@ -204,6 +229,10 @@ void GameManager::cleanUp()
 	m_FPSTextTexture.free();
 	m_GravityTextTexture.free();
 	m_DistanceTextTexture.free();
+	m_BackgroundA.free();
+	m_BackgroundB.free();
+	m_MidgroundA.free();
+	m_MidgroundB.free();
 
 	// Delete Player	
 	delete m_pPlayer;
