@@ -95,7 +95,7 @@ bool GameManager::loadMedia()
 	}	
 
 	// Fonts
-	m_Font = TTF_OpenFont("Fonts/lazy.ttf", 28);
+	m_Font = TTF_OpenFont("Fonts/go3v2.ttf", 28);
 	if (m_Font == NULL)
 	{
 		printf("Failed to load lazy font! SDL_ttf Error: %s\n", TTF_GetError());
@@ -121,7 +121,8 @@ void GameManager::update()
 {	
 	bool quit = false;
 	SDL_Event e;
-	int scrollingOffset = 0;
+	int backgroundAscrollingOffset = 0;
+	int backgroundBscrollingOffset = SCREEN_WIDTH;
 	Timer fpsTimer;
 	Timer capTimer;
 	Timer deltaTimer;
@@ -153,20 +154,30 @@ void GameManager::update()
 		m_pPlayer->move(timeStep);
 		deltaTimer.start();
 
-		//Scroll background
-		--scrollingOffset;
-		if (scrollingOffset < -m_BackgroundA.getWidth())
+		// Scroll background A
+		backgroundAscrollingOffset -= WORLD_SPEED;
+		if (backgroundAscrollingOffset < -SCREEN_WIDTH)
 		{
-			scrollingOffset = 0;
+			backgroundAscrollingOffset = SCREEN_WIDTH;
 		}
+
+		// Scroll background B
+		backgroundBscrollingOffset -= WORLD_SPEED;
+		if (backgroundBscrollingOffset < -SCREEN_WIDTH)
+		{
+			backgroundBscrollingOffset = SCREEN_WIDTH;
+		}
+		
 
 		// -------------------- RENDER --------------------
 		SDL_SetRenderDrawColor(WorldManager::getInstance()->getRenderer(), 0xFF, 0xFF, 0xFF, 0xFF);
 		SDL_RenderClear(WorldManager::getInstance()->getRenderer());		
 				
-		// Render background
-		m_BackgroundA.render(scrollingOffset, 0);
-		m_BackgroundB.render(scrollingOffset + m_BackgroundB.getWidth(), 0);
+		// Render background A
+		m_BackgroundA.render(backgroundAscrollingOffset, 0);
+
+		// Render background B
+		m_BackgroundB.render(backgroundBscrollingOffset, 0);
 
 		if (DEBUG) this->renderDebug();
 		m_pPlayer->render();
@@ -185,8 +196,8 @@ void GameManager::update()
 
 void GameManager::initDebug()
 {
-	//Set text color as black
-	textColor = { 0, 0, 0, 255 };	
+	//Set text color as White
+	textColor = COLOR_WHITE;	
 }
 
 void GameManager::renderDebug()
