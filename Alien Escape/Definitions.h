@@ -8,6 +8,8 @@
 #define SCREEN_TICK_PER_FRAME (1000 / SCREEN_FPS)
 #define PADDING 5
 #define DEBUG 1
+#define COLOR_WHITE {255, 255, 255, 255}
+#define WORLD_SPEED 1;
 
 enum Gravity
 {

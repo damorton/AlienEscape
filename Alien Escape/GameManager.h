@@ -24,11 +24,13 @@ private:
 	SDL_Window* m_Window = NULL;
 	SDL_Renderer* m_Renderer = NULL;			
 	TTF_Font* m_Font = NULL;	
-	Player* m_pPlayer;
-
+	Player* m_pPlayer = NULL;
 	SDL_Color textColor;
-
 	Sprite m_FPSTextTexture;
+	Sprite m_BackgroundA;
+	Sprite m_BackgroundB;
+	Sprite m_MidgroundA;
+	Sprite m_MidgroundB;
 	float avgFPS;	
 	std::stringstream fpsText;
 	Sprite m_GravityTextTexture;

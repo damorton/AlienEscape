@@ -12,7 +12,7 @@ public:
 	Sprite();
 	~Sprite();
 	bool loadFromFile(std::string path);
-	bool loadFromRenderedText(std::string textureText, SDL_Color textColor, TTF_Font* gFont);
+	bool loadFromRenderedText(std::string textureText, SDL_Color textColor, TTF_Font* font);
 	void free();
 	void setColor(Uint8 red, Uint8 green, Uint8 blue);
 	void setBlendMode(SDL_BlendMode blending);
