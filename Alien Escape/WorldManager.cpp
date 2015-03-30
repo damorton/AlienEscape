@@ -13,6 +13,7 @@ bool WorldManager::init()
 {	
 	m_eGravitationalPull = GRAVITY_DOWN;
 	m_RendererFlip = SDL_FLIP_NONE;
+	m_nGameWorldSpeed = WORLD_SPEED;
 	return true;
 }
 

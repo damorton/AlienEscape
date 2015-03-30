@@ -2,14 +2,10 @@
 #define	PLAYER_H_
 
 #include <iostream>
+#include "Definitions.h"
 #include "Sprite.h"
-#include "SDL.h"
 
-//Walking animation
-#define WALKING_ANIMATION_FRAMES 4
-
-#define GRAVITY 100
-#define MAX_JUMP_VELOCITY 1700
+class WorldManager;
 
 class Player
 {
@@ -29,12 +25,13 @@ public:
 	void setState(int state){ m_ePlayerState = (EPlayerState)state; };	
 private:
 	EPlayerState m_ePlayerState; 
+	WorldManager* m_pWorldManager;
+
 	int m_PosX;
 	int m_PosY;
 	int m_VelX;
 	int m_VelY;
 	int m_nFrame;
-	int spriteAnimationSpeed;
 	SDL_Rect gSpriteClips[WALKING_ANIMATION_FRAMES];
 	Sprite m_PlayerSprite;
 	bool m_bIsJumping;

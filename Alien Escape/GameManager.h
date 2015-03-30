@@ -4,10 +4,12 @@
 #include <SDL.h>
 #include <SDL_image.h>
 #include <SDL_ttf.h>
-#include "Sprite.h"
 #include <sstream>
+#include <memory>
+#include "Sprite.h"
 
 class Player;
+class WorldManager; 
 
 class GameManager
 {
@@ -24,6 +26,8 @@ private:
 	SDL_Window* m_Window = NULL;
 	SDL_Renderer* m_Renderer = NULL;			
 	TTF_Font* m_Font = NULL;	
+	WorldManager* m_pWorldManager;
+	//std::shared_ptr<Player> m_pPlayer;
 	Player* m_pPlayer = NULL;
 	SDL_Color textColor;
 	Sprite m_FPSTextTexture;

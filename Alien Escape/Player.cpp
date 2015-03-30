@@ -1,10 +1,13 @@
 #include <iostream>
 #include "Player.h"
-#include "Definitions.h"
 #include "GameManager.h"
 #include "WorldManager.h"
+
+
 bool Player::init()
 {		
+	m_pWorldManager = WorldManager::getInstance();
+
 	//Initialize the offsets
 	m_PosX = SCREEN_WIDTH * .10;
 	m_PosY = SCREEN_HEIGHT - m_PlayerSprite.getHeight();
@@ -14,7 +17,6 @@ bool Player::init()
 	m_VelY = 0;
 
 	m_nFrame = 0;
-	spriteAnimationSpeed = 4;
 	
 	//Set sprite clips
 	gSpriteClips[0].x = 0;
@@ -48,8 +50,8 @@ void Player::handleEvent(SDL_Event& e)
 	//If a key was pressed
 	if (e.type == SDL_KEYDOWN && e.key.repeat == 0)
 	{
-		if (WorldManager::getInstance()->getGravityDirection() == GRAVITY_DOWN && e.key.keysym.sym == SDLK_UP) this->jump();
-		else if (WorldManager::getInstance()->getGravityDirection() == GRAVITY_UP && e.key.keysym.sym == SDLK_DOWN) this->jump();
+		if (m_pWorldManager->getGravityDirection() == GRAVITY_DOWN && e.key.keysym.sym == SDLK_UP) this->jump();
+		else if (m_pWorldManager->getGravityDirection() == GRAVITY_UP && e.key.keysym.sym == SDLK_DOWN) this->jump();
 	}
 	/*
 	//If a key was pressed
@@ -86,7 +88,7 @@ void Player::jump()
 	{
 		m_nNumberOfJumps++;
 		m_bIsJumping = true;
-		if (WorldManager::getInstance()->getGravityDirection() == GRAVITY_DOWN)
+		if (m_pWorldManager->getGravityDirection() == GRAVITY_DOWN)
 		{
 			m_VelY -= MAX_JUMP_VELOCITY;			
 		}
@@ -115,19 +117,19 @@ void Player::move(float timeStep)
 	}
 	*/
 
-	//Move the dot up or down
+	//Move the player up or down
 	m_PosY += m_VelY * timeStep;
 
-	//If the dot went too far up or down
-	if (m_PosY < 0)
+	//If the player went too far up or down
+	if (m_PosY < FLOOR_POSITION)
 	{
-		m_PosY = 0;
+		m_PosY = FLOOR_POSITION;
 		m_bIsJumping = false;
 		m_VelY = 0;
 	}
-	else if (m_PosY > SCREEN_HEIGHT - m_PlayerSprite.getHeight())
+	else if (m_PosY > SCREEN_HEIGHT - m_PlayerSprite.getHeight() - ROOF_POSITION)
 	{
-		m_PosY = SCREEN_HEIGHT - m_PlayerSprite.getHeight();
+		m_PosY = SCREEN_HEIGHT - m_PlayerSprite.getHeight() - ROOF_POSITION;
 		m_bIsJumping = false;
 		m_VelY = 0;
 	}
@@ -135,7 +137,7 @@ void Player::move(float timeStep)
 	// Gravity
 	if (m_bIsJumping)
 	{
-		if (WorldManager::getInstance()->getGravityDirection() == GRAVITY_DOWN)
+		if (m_pWorldManager->getGravityDirection() == GRAVITY_DOWN)
 		{
 			m_VelY += GRAVITY;
 		}
@@ -147,26 +149,27 @@ void Player::move(float timeStep)
 
 	if (m_nNumberOfJumps > 3)
 	{
-		WorldManager::getInstance()->flipGravity();
+		m_pWorldManager->flipGravity();
 		m_nNumberOfJumps = 0;
 	}
 
 	// Distance
 	m_nDistance++;
 	m_nDistanceScore = m_nDistance / SCREEN_FPS;
+	if (m_nDistanceScore > 0 && m_nDistanceScore % 2 == 0 && m_pWorldManager->getGameWorldSpeed() < MAX_SPEED) m_pWorldManager->increaseGameWorldSpeed();
 }
 
 void Player::render()
 {	
 	//Render current frame
-	SDL_Rect* currentClip = &gSpriteClips[m_nFrame / spriteAnimationSpeed];
-	m_PlayerSprite.render((int)m_PosX, (int)m_PosY, currentClip,NULL, NULL, WorldManager::getInstance()->getRendererFlip());
+	SDL_Rect* currentClip = &gSpriteClips[m_nFrame / SPRITE_ANIMATION_SPEED];
+	m_PlayerSprite.render((int)m_PosX, (int)m_PosY, currentClip,NULL, NULL, m_pWorldManager->getRendererFlip());
 	
 	//Go to next frame
 	++m_nFrame;
 
 	//Cycle animation
-	if (m_nFrame / spriteAnimationSpeed >= WALKING_ANIMATION_FRAMES)
+	if (m_nFrame / SPRITE_ANIMATION_SPEED >= WALKING_ANIMATION_FRAMES)
 	{
 		m_nFrame = 0;
 	}

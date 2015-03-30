@@ -55,9 +55,11 @@ bool GameManager::init()
 		
 	// Create player
 	m_pPlayer = new Player();
+	//std::shared_ptr<Player> m_pPlayer(new Player());
 
 	// Store
-	WorldManager::getInstance()->setRenderer(m_Renderer);
+	m_pWorldManager = WorldManager::getInstance();
+	m_pWorldManager->setRenderer(m_Renderer);
 	return success;
 }
 
@@ -113,6 +115,16 @@ bool GameManager::loadMedia()
 		printf("Failed to load background texture!\n");
 		success = false;
 	}
+	if (!m_MidgroundA.loadFromFile("Backgrounds/MidgroundA.png"))
+	{
+		printf("Failed to load background texture!\n");
+		success = false;
+	}
+	if (!m_MidgroundB.loadFromFile("Backgrounds/MidgroundB.png"))
+	{
+		printf("Failed to load background texture!\n");
+		success = false;
+	}
 
 	return success;
 }
@@ -121,8 +133,10 @@ void GameManager::update()
 {	
 	bool quit = false;
 	SDL_Event e;
-	int backgroundAscrollingOffset = 0;
-	int backgroundBscrollingOffset = SCREEN_WIDTH;
+	float backgroundAscrollingOffset = 0;
+	float backgroundBscrollingOffset = SCREEN_WIDTH;
+	float midgroundAscrollingOffset = 0;
+	float midgroundBscrollingOffset = SCREEN_WIDTH;
 	Timer fpsTimer;
 	Timer capTimer;
 	Timer deltaTimer;
@@ -155,23 +169,37 @@ void GameManager::update()
 		deltaTimer.start();
 
 		// Scroll background A
-		backgroundAscrollingOffset -= WORLD_SPEED;
+		backgroundAscrollingOffset -= m_pWorldManager->getGameWorldSpeed();
 		if (backgroundAscrollingOffset < -SCREEN_WIDTH)
 		{
 			backgroundAscrollingOffset = SCREEN_WIDTH;
 		}
 
 		// Scroll background B
-		backgroundBscrollingOffset -= WORLD_SPEED;
+		backgroundBscrollingOffset -= m_pWorldManager->getGameWorldSpeed();
 		if (backgroundBscrollingOffset < -SCREEN_WIDTH)
 		{
 			backgroundBscrollingOffset = SCREEN_WIDTH;
 		}
+
+		// Scroll midground A
+		midgroundAscrollingOffset -= m_pWorldManager->getGameWorldSpeed() - 1.0f;
+		if (midgroundAscrollingOffset < -SCREEN_WIDTH)
+		{
+			midgroundAscrollingOffset = SCREEN_WIDTH;
+		}
+
+		// Scroll midground B
+		midgroundBscrollingOffset -= m_pWorldManager->getGameWorldSpeed() - 1.0f;
+		if (midgroundBscrollingOffset < -SCREEN_WIDTH)
+		{
+			midgroundBscrollingOffset = SCREEN_WIDTH;
+		}
 		
 
 		// -------------------- RENDER --------------------
-		SDL_SetRenderDrawColor(WorldManager::getInstance()->getRenderer(), 0xFF, 0xFF, 0xFF, 0xFF);
-		SDL_RenderClear(WorldManager::getInstance()->getRenderer());		
+		SDL_SetRenderDrawColor(m_pWorldManager->getRenderer(), 0x00, 0x00, 0x00, 0xFF);
+		SDL_RenderClear(m_pWorldManager->getRenderer());		
 				
 		// Render background A
 		m_BackgroundA.render(backgroundAscrollingOffset, 0);
@@ -179,9 +207,15 @@ void GameManager::update()
 		// Render background B
 		m_BackgroundB.render(backgroundBscrollingOffset, 0);
 
+		// Render background A
+		m_MidgroundA.render(midgroundAscrollingOffset, 0);
+
+		// Render background B
+		m_MidgroundB.render(midgroundBscrollingOffset, 0);
+
 		if (DEBUG) this->renderDebug();
 		m_pPlayer->render();
-		SDL_RenderPresent(WorldManager::getInstance()->getRenderer());
+		SDL_RenderPresent(m_pWorldManager->getRenderer());
 
 		// -------------------- DELAY --------------------
 		++countedFrames;
@@ -214,7 +248,7 @@ void GameManager::renderDebug()
 
 	// Gravity Info
 	gravityText.str("");	
-	if(WorldManager::getInstance()->getGravityDirection() == GRAVITY_DOWN) gravityText << "Gravity: DOWN";
+	if(m_pWorldManager->getGravityDirection() == GRAVITY_DOWN) gravityText << "Gravity: DOWN";
 	else gravityText << "Gravity: UP";	
 	if (!m_GravityTextTexture.loadFromRenderedText(gravityText.str().c_str(), textColor, m_Font))
 	{
