@@ -1,9 +1,10 @@
+#include <stdio.h>
 #include "Sprite.h"
 #include "WorldManager.h"
 #include <SDL_image.h>
 
 Sprite::Sprite()
-{
+{	
 	mTexture = NULL;
 	mWidth = 0;
 	mHeight = 0;

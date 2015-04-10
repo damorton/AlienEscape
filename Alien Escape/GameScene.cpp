@@ -1,12 +1,41 @@
-#include "GameManager.h"
+#include "GameScene.h"
 #include "WorldManager.h"
 #include "Definitions.h"
 #include "Player.h"
 #include "Timer.h"
 
-bool GameManager::init()
+GameScene::GameScene()
+{	
+	if (!Scene::init())
+	{
+		printf("Failed to initialize Scene!\n");		
+	}
+	else
+	{
+		if (!init())
+		{
+			printf("Failed to initialize Game Scene!\n");
+		}
+		else
+		{
+			if (!loadMedia())
+			{
+				printf("Failed to load media!\n");
+			}			
+		}
+	}
+
+}
+
+GameScene::~GameScene()
+{
+	this->cleanup();
+}
+
+bool GameScene::init()
 {
 	bool success = true;
+		
 	if (SDL_Init(SDL_INIT_VIDEO) < 0)
 	{
 		printf("SDL could not initialize! SDL Error: %s\n", SDL_GetError());
@@ -63,29 +92,14 @@ bool GameManager::init()
 	return success;
 }
 
-bool GameManager::start()
+bool GameScene::run()
 {
-	if (!init())
-	{
-		printf("Failed to initialize!\n");
-	}
-	else
-	{
-		if (!loadMedia())
-		{
-			printf("Failed to load media!\n");
-		}
-		else
-		{
-			// run game loop
-			this->update();
-		}
-	}
-	this->cleanUp();
+	// run game loop
+	this->update();	
 	return 0;
 }
 
-bool GameManager::loadMedia()
+bool GameScene::loadMedia()
 {
 	bool success = true;
 
@@ -129,7 +143,7 @@ bool GameManager::loadMedia()
 	return success;
 }
 
-void GameManager::update()
+void GameScene::update()
 {	
 	bool quit = false;
 	SDL_Event e;
@@ -146,7 +160,7 @@ void GameManager::update()
 
 	// -------------------- GAME LOOP START --------------------
 	while (!quit)
-	{
+	{		
 		// -------------------- INPUT --------------------		
 		capTimer.start();				
 		while (SDL_PollEvent(&e) != 0)
@@ -228,13 +242,13 @@ void GameManager::update()
 	// -------------------- GAME LOOP END --------------------
 }
 
-void GameManager::initDebug()
+void GameScene::initDebug()
 {
 	//Set text color as White
 	textColor = COLOR_WHITE;	
 }
 
-void GameManager::renderDebug()
+void GameScene::renderDebug()
 {
 	//Set text to be rendered
 	fpsText.str("");
@@ -268,7 +282,7 @@ void GameManager::renderDebug()
 }
 
 
-void GameManager::cleanUp()
+void GameScene::cleanup()
 {
 	//Free loaded images
 	m_FPSTextTexture.free();

@@ -3,7 +3,6 @@
 
 #include <SDL.h>
 #include <SDL_ttf.h>
-#include <stdio.h>
 #include <string>
 
 class Sprite

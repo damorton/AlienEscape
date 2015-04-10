@@ -1,25 +1,29 @@
-#ifndef GAMEMANAGER_H_
-#define GAMEMANAGER_H_
+#ifndef GAMESCENE_H_
+#define GAMESCENE_H_
 
 #include <SDL.h>
 #include <SDL_image.h>
 #include <SDL_ttf.h>
 #include <sstream>
 #include <memory>
+
+#include "Scene.h"
 #include "Sprite.h"
 
 class Player;
 class WorldManager; 
 
-class GameManager
+class GameScene : public Scene
 {
 public:	
-	GameManager(){}
-	bool init();
-	bool start();
+	GameScene();
+	virtual ~GameScene();
+	virtual bool init();
+	virtual bool run();
+	virtual void cleanup();	
+
 	void update(); 
-	bool loadMedia();
-	void cleanUp(); 
+	bool loadMedia();	
 	void renderDebug();
 	void initDebug();
 private:			

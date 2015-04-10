@@ -1,20 +1,33 @@
 #include "WorldManager.h"
+#include "Scene.h"
+#include <iostream>
 
 WorldManager* WorldManager::m_Instance = 0;
 
 WorldManager* WorldManager::getInstance()
 {	
-	if (m_Instance == 0)
+	if (m_Instance == nullptr)
 		m_Instance = new WorldManager();
 	return m_Instance;
 }
 
+WorldManager::WorldManager()
+{
+	this->init();
+}
+
 bool WorldManager::init()
 {	
+	currentRunningScene = nullptr;
 	m_eGravitationalPull = GRAVITY_DOWN;
 	m_RendererFlip = SDL_FLIP_NONE;
 	m_nGameWorldSpeed = WORLD_SPEED;
 	return true;
+}
+
+WorldManager::~WorldManager()
+{
+	this->cleanUp();
 }
 
 void WorldManager::flipGravity()
@@ -31,10 +44,22 @@ void WorldManager::flipGravity()
 	}	
 }
 
+void WorldManager::runWithScene(Scene* scene)
+{
+	printf("WorldManager: Changing running scene...\n");
+	if (currentRunningScene != nullptr)
+	{
+		delete currentRunningScene;
+	}
+
+	currentRunningScene = scene;
+	currentRunningScene->run();	
+}
+
 void WorldManager::cleanUp()
 {
-	m_pRenderer = NULL;
+	m_pRenderer = nullptr;
 	delete m_Instance;
-	m_Instance = NULL;
+	m_Instance = nullptr;
 }
 

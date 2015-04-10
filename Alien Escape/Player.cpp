@@ -1,6 +1,6 @@
 #include <iostream>
 #include "Player.h"
-#include "GameManager.h"
+#include "GameScene.h"
 #include "WorldManager.h"
 
 
