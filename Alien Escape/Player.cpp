@@ -2,16 +2,15 @@
 #include "Player.h"
 #include "GameScene.h"
 #include "WorldManager.h"
-
+#include "Timer.h"
 
 bool Player::init()
 {		
-	m_pWorldManager = WorldManager::getInstance();
-
+	m_pWorldManager = WorldManager::getInstance();	
 	//Initialize the offsets
 	m_PosX = SCREEN_WIDTH * .10;
 	m_PosY = SCREEN_HEIGHT - m_PlayerSprite.getHeight();
-
+	m_TBoostTimer = new Timer();
 	//Initialize the velocity
 	m_VelX = 0;
 	m_VelY = 0;
@@ -42,6 +41,10 @@ bool Player::init()
 	m_bIsJumping = false;
 	m_fDeltaTime = 0;
 	m_nNumberOfJumps = 0;
+	m_bBoostEnabled = true;
+	m_bIsBoosting = false;
+	m_TBoostTimer->start();
+	m_TBoostTimer->pause();
 	return true;
 }
 
@@ -49,10 +52,38 @@ void Player::handleEvent(SDL_Event& e)
 {	
 	//If a key was pressed
 	if (e.type == SDL_KEYDOWN && e.key.repeat == 0)
-	{
+	{		
 		if (m_pWorldManager->getGravityDirection() == GRAVITY_DOWN && e.key.keysym.sym == SDLK_UP) this->jump();
-		else if (m_pWorldManager->getGravityDirection() == GRAVITY_UP && e.key.keysym.sym == SDLK_DOWN) this->jump();
+		else if (m_pWorldManager->getGravityDirection() == GRAVITY_UP && e.key.keysym.sym == SDLK_DOWN) this->jump();			
 	}
+	
+	if (e.type == SDL_KEYDOWN && e.key.repeat == 0)
+	{
+		if (e.key.keysym.sym == SDLK_SPACE)
+		{	
+			if (m_TBoostTimer->getTicks() < 2000 && m_bBoostEnabled)
+			{			
+				m_bIsBoosting = true;
+				m_fGameSpeed = m_pWorldManager->getGameWorldSpeed();
+				m_pWorldManager->setGameWorldSpeed(20);
+				m_TBoostTimer->unpause();
+			}			
+		}			
+	}
+	else if (e.type == SDL_KEYUP && e.key.repeat == 0)
+	{
+		if (e.key.keysym.sym == SDLK_SPACE)
+		{				
+			if (m_bIsBoosting)
+			{				
+				m_bIsBoosting = false;
+				m_pWorldManager->setGameWorldSpeed(m_fGameSpeed);
+				m_TBoostTimer->pause();
+			}
+		}		
+	}
+
+
 	/*
 	//If a key was pressed
 	if (e.type == SDL_KEYDOWN && e.key.repeat == 0)
@@ -101,6 +132,14 @@ void Player::jump()
 
 void Player::move(float timeStep)
 {
+	if (m_TBoostTimer->getTicks() > 2000)
+	{
+		m_bBoostEnabled = false;
+		m_pWorldManager->setGameWorldSpeed(m_fGameSpeed);		
+	}	
+
+	
+
 	m_fDeltaTime = timeStep;	
 	/*
 	//Move the dot left or right

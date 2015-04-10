@@ -6,6 +6,7 @@
 #include "Sprite.h"
 
 class WorldManager;
+class Timer;
 
 class Player
 {
@@ -26,7 +27,7 @@ public:
 private:
 	EPlayerState m_ePlayerState; 
 	WorldManager* m_pWorldManager;
-
+	Timer* m_TBoostTimer;
 	int m_PosX;
 	int m_PosY;
 	int m_VelX;
@@ -39,6 +40,9 @@ private:
 	int m_nNumberOfJumps;
 	int m_nDistance;
 	int m_nDistanceScore;
+	bool m_bIsBoosting;
+	bool m_bBoostEnabled;
+	float m_fGameSpeed;
 	// reminder: release resources in cleanup
 };
 

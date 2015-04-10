@@ -3,28 +3,21 @@
 #include "Definitions.h"
 #include "Player.h"
 #include "Timer.h"
+#include "HUD.h"
 
 GameScene::GameScene()
-{	
-	if (!Scene::init())
+{		
+	if (!init())
 	{
-		printf("Failed to initialize Scene!\n");		
+		printf("Failed to initialize Game Scene!\n");
 	}
 	else
 	{
-		if (!init())
+		if (!loadMedia())
 		{
-			printf("Failed to initialize Game Scene!\n");
-		}
-		else
-		{
-			if (!loadMedia())
-			{
-				printf("Failed to load media!\n");
-			}			
-		}
+			printf("Failed to load media!\n");
+		}			
 	}
-
 }
 
 GameScene::~GameScene()
@@ -35,60 +28,19 @@ GameScene::~GameScene()
 bool GameScene::init()
 {
 	bool success = true;
-		
-	if (SDL_Init(SDL_INIT_VIDEO) < 0)
-	{
-		printf("SDL could not initialize! SDL Error: %s\n", SDL_GetError());
-		success = false;
-	}
-	else
-	{
-		if (!SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1"))
-		{
-			printf("Warning: Linear texture filtering not enabled!");
-		}
-		m_Window = SDL_CreateWindow("Alien Escape", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
-		if (m_Window == NULL)
-		{
-			printf("Window could not be created! SDL Error: %s\n", SDL_GetError());
-			success = false;
-		}
-		else
-		{
-			m_Renderer = SDL_CreateRenderer(m_Window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
-			if (m_Renderer == NULL)
-			{
-				printf("Renderer could not be created! SDL Error: %s\n", SDL_GetError());
-				success = false;
-			}
-			else
-			{
-				// PNG images
-				SDL_SetRenderDrawColor(m_Renderer, 0xFF, 0xFF, 0xFF, 0xFF);
-				int imgFlags = IMG_INIT_PNG;
-				if (!(IMG_Init(imgFlags) & imgFlags))
-				{
-					printf("SDL_image could not initialize! SDL_image Error: %s\n", IMG_GetError());
-					success = false;
-				}	
+	thisSceneState = RUNNING;
+	m_pWorldManager = WorldManager::getInstance();
+	//Set text color as White
+	m_TextColor = COLOR_WHITE;
 
-				// Truetype Fonts
-				if (TTF_Init() == -1)
-				{
-					printf("SDL_ttf could not initialize! SDL_ttf Error: %s\n", TTF_GetError());
-					success = false;
-				}
-			}
-		}
-	}
-		
 	// Create player
 	m_pPlayer = new Player();
-	//std::shared_ptr<Player> m_pPlayer(new Player());
+	m_pWorldManager->registerPlayer(m_pPlayer);
 
-	// Store
-	m_pWorldManager = WorldManager::getInstance();
-	m_pWorldManager->setRenderer(m_Renderer);
+	m_pHUD = new HUD();
+
+	//std::shared_ptr<Player> m_pPlayer(new Player());
+	printf("GameScene: Initialized\n");
 	return success;
 }
 
@@ -101,6 +53,7 @@ bool GameScene::run()
 
 bool GameScene::loadMedia()
 {
+	printf("GameScene: Loading Media\n");
 	bool success = true;
 
 	// Sprites
@@ -145,7 +98,7 @@ bool GameScene::loadMedia()
 
 void GameScene::update()
 {	
-	bool quit = false;
+	
 	SDL_Event e;
 	float backgroundAscrollingOffset = 0;
 	float backgroundBscrollingOffset = SCREEN_WIDTH;
@@ -156,81 +109,122 @@ void GameScene::update()
 	Timer deltaTimer;
 	fpsTimer.start();	
 	int countedFrames = 0;	
-	if (DEBUG) this->initDebug();
 
 	// -------------------- GAME LOOP START --------------------
-	while (!quit)
+	while (thisSceneState != DESTROY)
 	{		
-		// -------------------- INPUT --------------------		
-		capTimer.start();				
+		capTimer.start();
+
+
+		// -------------------- INPUT --------------------	
 		while (SDL_PollEvent(&e) != 0)
 		{			
+			// Game World Input
 			if (e.type == SDL_QUIT)
 			{
-				quit = true;
+				thisSceneState = DESTROY;
+			}		
+						
+			
+			// Scene input
+			if (e.type == SDL_KEYDOWN && e.key.repeat == 0)
+			{
+				// If the enter key was pressed Pause the game
+				if (e.key.keysym.sym == SDLK_RETURN)
+				{
+					if (m_pWorldManager->getInstance()->getRunningScene()->isPaused())
+					{
+						m_pWorldManager->getInstance()->getRunningScene()->resume();
+						deltaTimer.unpause();
+					}
+					else
+					{
+						m_pWorldManager->getInstance()->getRunningScene()->pause();
+						deltaTimer.pause();
+					}					
+				}
 			}
-			m_pPlayer->handleEvent(e);
+			
+
+			// Game object input
+			if (!m_pWorldManager->getInstance()->getRunningScene()->isPaused())
+			{
+				// Characters
+				m_pPlayer->handleEvent(e);
+			}
+			
 		}	
 
-		// -------------------- LOGIC --------------------
-		avgFPS = countedFrames / (fpsTimer.getTicks() / 1000.f);
-		if (avgFPS > 2000000)
-		{
-			avgFPS = 0;
-		}
-		float timeStep = deltaTimer.getTicks() / 1000.f;
-		m_pPlayer->move(timeStep);
-		deltaTimer.start();
 
-		// Scroll background A
-		backgroundAscrollingOffset -= m_pWorldManager->getGameWorldSpeed();
-		if (backgroundAscrollingOffset < -SCREEN_WIDTH)
+		// If the game is not paused
+		if (!m_pWorldManager->getInstance()->getRunningScene()->isPaused())
 		{
-			backgroundAscrollingOffset = SCREEN_WIDTH;
-		}
 
-		// Scroll background B
-		backgroundBscrollingOffset -= m_pWorldManager->getGameWorldSpeed();
-		if (backgroundBscrollingOffset < -SCREEN_WIDTH)
-		{
-			backgroundBscrollingOffset = SCREEN_WIDTH;
-		}
+			// -------------------- LOGIC --------------------
 
-		// Scroll midground A
-		midgroundAscrollingOffset -= m_pWorldManager->getGameWorldSpeed() - 1.0f;
-		if (midgroundAscrollingOffset < -SCREEN_WIDTH)
-		{
-			midgroundAscrollingOffset = SCREEN_WIDTH;
-		}
+			m_fAverageFPS = countedFrames / (fpsTimer.getTicks() / 1000.f);
 
-		// Scroll midground B
-		midgroundBscrollingOffset -= m_pWorldManager->getGameWorldSpeed() - 1.0f;
-		if (midgroundBscrollingOffset < -SCREEN_WIDTH)
-		{
-			midgroundBscrollingOffset = SCREEN_WIDTH;
-		}
+			if (m_fAverageFPS > 2000000)
+			{
+				m_fAverageFPS = 0;
+			}
+			m_pWorldManager->setAverageFPS(m_fAverageFPS);
+
+			float timeStep = deltaTimer.getTicks() / 1000.f;
+			m_pPlayer->move(timeStep);
+			deltaTimer.start();
 		
+			// Scroll background A
+			backgroundAscrollingOffset -= m_pWorldManager->getGameWorldSpeed();
+			if (backgroundAscrollingOffset < -SCREEN_WIDTH)
+			{
+				backgroundAscrollingOffset = SCREEN_WIDTH;
+			}
 
-		// -------------------- RENDER --------------------
-		SDL_SetRenderDrawColor(m_pWorldManager->getRenderer(), 0x00, 0x00, 0x00, 0xFF);
-		SDL_RenderClear(m_pWorldManager->getRenderer());		
-				
-		// Render background A
-		m_BackgroundA.render(backgroundAscrollingOffset, 0);
+			// Scroll background B
+			backgroundBscrollingOffset -= m_pWorldManager->getGameWorldSpeed();
+			if (backgroundBscrollingOffset < -SCREEN_WIDTH)
+			{
+				backgroundBscrollingOffset = SCREEN_WIDTH;
+			}
 
-		// Render background B
-		m_BackgroundB.render(backgroundBscrollingOffset, 0);
+			// Scroll midground A
+			midgroundAscrollingOffset -= m_pWorldManager->getGameWorldSpeed() - 1.0f;
+			if (midgroundAscrollingOffset < -SCREEN_WIDTH)
+			{
+				midgroundAscrollingOffset = SCREEN_WIDTH;
+			}
 
-		// Render background A
-		m_MidgroundA.render(midgroundAscrollingOffset, 0);
+			// Scroll midground B
+			midgroundBscrollingOffset -= m_pWorldManager->getGameWorldSpeed() - 1.0f;
+			if (midgroundBscrollingOffset < -SCREEN_WIDTH)
+			{
+				midgroundBscrollingOffset = SCREEN_WIDTH;
+			}
 
-		// Render background B
-		m_MidgroundB.render(midgroundBscrollingOffset, 0);
 
-		if (DEBUG) this->renderDebug();
-		m_pPlayer->render();
-		SDL_RenderPresent(m_pWorldManager->getRenderer());
+			// -------------------- RENDER --------------------
+			SDL_SetRenderDrawColor(m_pWorldManager->getRenderer(), 0x00, 0x00, 0x00, 0xFF);
+			SDL_RenderClear(m_pWorldManager->getRenderer());
 
+			// Render background A
+			m_BackgroundA.render(backgroundAscrollingOffset, 0);
+
+			// Render background B
+			m_BackgroundB.render(backgroundBscrollingOffset, 0);
+
+			// Render background A
+			m_MidgroundA.render(midgroundAscrollingOffset, 0);
+
+			// Render background B
+			m_MidgroundB.render(midgroundBscrollingOffset, 0);
+
+			m_pPlayer->render();
+			m_pHUD->render();
+			SDL_RenderPresent(m_pWorldManager->getRenderer());
+		}
+
+		
 		// -------------------- DELAY --------------------
 		++countedFrames;
 		int frameTicks = capTimer.getTicks();
@@ -238,52 +232,14 @@ void GameScene::update()
 		{
 			SDL_Delay(SCREEN_TICK_PER_FRAME - frameTicks);
 		}
+				
 	}
 	// -------------------- GAME LOOP END --------------------
 }
 
-void GameScene::initDebug()
-{
-	//Set text color as White
-	textColor = COLOR_WHITE;	
-}
-
-void GameScene::renderDebug()
-{
-	//Set text to be rendered
-	fpsText.str("");
-	fpsText << "FPS: " << avgFPS;
-	if (!m_FPSTextTexture.loadFromRenderedText(fpsText.str().c_str(), textColor, m_Font))
-	{
-		printf("Unable to render FPS texture!\n");
-	}
-	m_FPSTextTexture.render(PADDING, PADDING);
-
-
-	// Gravity Info
-	gravityText.str("");	
-	if(m_pWorldManager->getGravityDirection() == GRAVITY_DOWN) gravityText << "Gravity: DOWN";
-	else gravityText << "Gravity: UP";	
-	if (!m_GravityTextTexture.loadFromRenderedText(gravityText.str().c_str(), textColor, m_Font))
-	{
-		printf("Unable to render FPS texture!\n");
-	}
-	m_GravityTextTexture.render(PADDING, PADDING + m_FPSTextTexture.getHeight() + PADDING);
-
-	// Distance
-	distanceText.str("");
-	distanceText << "Distance: " << m_pPlayer->getDistance() << "m";
-	if (!m_DistanceTextTexture.loadFromRenderedText(distanceText.str().c_str(), textColor, m_Font))
-	{
-		printf("Unable to render FPS texture!\n");
-	}
-	m_DistanceTextTexture.render(PADDING, PADDING + m_FPSTextTexture.getHeight() + PADDING + m_GravityTextTexture.getHeight() + PADDING);
-	
-}
-
-
 void GameScene::cleanup()
 {
+	printf("GameScene: Destroying Assets\n");
 	//Free loaded images
 	m_FPSTextTexture.free();
 	m_GravityTextTexture.free();
@@ -291,24 +247,16 @@ void GameScene::cleanup()
 	m_BackgroundA.free();
 	m_BackgroundB.free();
 	m_MidgroundA.free();
-	m_MidgroundB.free();
-
+	m_MidgroundB.free();	
+		
 	// Delete Player	
 	delete m_pPlayer;
-	m_pPlayer = NULL;
+	m_pPlayer = nullptr;
+	
+	delete m_pHUD;
+	m_pHUD = nullptr;
 
 	//Free global font
 	TTF_CloseFont(m_Font);
-	m_Font = NULL;
-
-	//Destroy window	
-	SDL_DestroyRenderer(m_Renderer);
-	SDL_DestroyWindow(m_Window);
-	m_Renderer = NULL;
-	m_Window = NULL;
-
-	//Quit SDL subsystems
-	TTF_Quit();
-	IMG_Quit();
-	SDL_Quit();
+	m_Font = nullptr;	
 }

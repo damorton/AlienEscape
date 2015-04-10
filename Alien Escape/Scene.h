@@ -10,11 +10,14 @@ public:
 	virtual bool init();
 	virtual bool run();
 	virtual void cleanup();
-	~Scene(); //deconstructor
+	virtual ~Scene(); //deconstructor
+	void pause(){ thisSceneState = PAUSED; };
+	void resume(){ thisSceneState = RUNNING; };
+	bool isPaused(){ if (thisSceneState == PAUSED) return true; else return false; };
 
 protected:
 	bool initCompleted;
-	SceneState thisSceneState;
+	SceneState thisSceneState;	
 };
 
 

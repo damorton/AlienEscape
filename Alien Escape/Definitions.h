@@ -1,7 +1,9 @@
 #ifndef DEFINITIONS_H_
 #define DEFINITIONS_H_
 
-#include "SDL.h"
+#include <SDL.h>
+#include <SDL_image.h>
+#include <SDL_ttf.h>
 
 // Config
 #define XMLDOC "game.xml"
@@ -15,7 +17,7 @@
 
 // Game world
 #define GRAVITY 100
-#define WORLD_SPEED 2.0f
+#define WORLD_SPEED 4.0f
 #define MAX_SPEED 10.0f
 #define SPEED_INC 0.02f
 #define SPEED_DEC 0.02f

@@ -7,13 +7,13 @@ Scene::Scene()
 	{
 		std::cout << "Scene: Failed to initialize Scene\n" << std::endl;
 	}
-	initCompleted = false;
-	thisSceneState = PAUSED;
+	initCompleted = false;	
 }
 
 bool Scene::init()
 {
 	bool success = true;
+	thisSceneState = RUNNING;
 	std::cout << "Scene: Scene Initializing" << std::endl;
 	std::cout << "Scene: Loading Textures" << std::endl;	
 	return success;
@@ -25,7 +25,7 @@ bool Scene::run()
 	{
 		init();
 	}
-	thisSceneState = RUNNING;
+	
 	while (thisSceneState == RUNNING)
 	{
 		std::cout << "Update world" << std::endl;
