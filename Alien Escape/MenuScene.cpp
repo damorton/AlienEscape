@@ -2,6 +2,7 @@
 #include "GameScene.h"
 #include "WorldManager.h"
 #include "Timer.h"
+#include "Label.h"
 
 MenuScene::MenuScene()
 {	
@@ -28,10 +29,7 @@ bool MenuScene::init()
 	bool success = true;
 	thisSceneState = RUNNING;
 	m_pWorldManager = WorldManager::getInstance();
-
-	//Set text color as White
-	m_TextColor = COLOR_WHITE;
-
+	
 	printf("MenuScene: Initialized\n");
 	return success;
 }
@@ -55,9 +53,22 @@ bool MenuScene::loadMedia()
 		printf("Failed to load background texture!\n");
 		success = false;
 	}
+
+	//Set text color as White
+	m_TextColor = COLOR_WHITE;
+
+	m_StartButton = new Label("Start Game", m_TextColor, m_Font);
+	m_StartButton->setPosition(SCREEN_WIDTH * .5 - m_StartButton->getSprite()->getWidth() / 2, SCREEN_HEIGHT * .85);
+
 	return success;
 }
 
+void MenuScene::startGame()
+{
+	// Run GameScene
+	GameScene* gameScene = new GameScene();
+	WorldManager::getInstance()->runWithScene(gameScene);
+}
 
 bool MenuScene::run()
 {		
@@ -68,8 +79,8 @@ bool MenuScene::run()
 	Timer capTimer;
 	int countedFrames = 0;
 
-	while (thisSceneState == RUNNING)
-	{	
+	while (thisSceneState != DESTROY)
+	{
 		capTimer.start();
 		//printf("MenuScene: Running update...\n");
 
@@ -86,18 +97,79 @@ bool MenuScene::run()
 			if (e.type == SDL_KEYDOWN && e.key.repeat == 0)
 			{
 				if (e.key.keysym.sym == SDLK_SPACE)
-				{	
-					// Run GameScene
-					GameScene* gameScene = new GameScene();
-					WorldManager::getInstance()->runWithScene(gameScene);	
-					return 0; // Exit game
+				{
+					/*
+					startGame();
+					return 0;
+					*/
 				}
 			}
-					
+
+			// Mouse events
+			//If mouse event happened
+			if (e.type == SDL_MOUSEMOTION || e.type == SDL_MOUSEBUTTONDOWN || e.type == SDL_MOUSEBUTTONUP)
+			{
+				//Get mouse position
+				int x, y;
+				SDL_GetMouseState(&x, &y);
+
+				//Check if mouse is in button
+
+
+				bool inside = true;
+
+				//Mouse is left of the button
+				if (x < m_StartButton->getPositionX())
+				{
+					inside = false;
+				}
+				//Mouse is right of the button
+				else if (x > m_StartButton->getPositionX() + m_StartButton->getSprite()->getWidth())
+				{
+					inside = false;
+				}
+				//Mouse above the button
+				else if (y < m_StartButton->getPositionY())
+				{
+					inside = false;
+				}
+				//Mouse below the button
+				else if (y > m_StartButton->getPositionY() + m_StartButton->getSprite()->getHeight())
+				{
+					inside = false;
+				}
+
+				//Mouse is outside button
+				if (!inside)
+				{
+
+				}
+				//Mouse is inside button
+				else
+				{
+					//Set mouse over sprite
+					switch (e.type)
+					{
+					case SDL_MOUSEMOTION:
+						//mCurrentSprite = BUTTON_SPRITE_MOUSE_OVER_MOTION;
+						break;
+					case SDL_MOUSEBUTTONDOWN:
+						// Run GameScene
+						startGame();
+						return 0;
+						break;
+					case SDL_MOUSEBUTTONUP:
+						//mCurrentSprite = BUTTON_SPRITE_MOUSE_UP;
+						break;
+					}
+				}
+
+			}
+
 		}
 
 		// -------------------- LOGIC --------------------
-				
+
 
 		// -------------------- RENDER --------------------
 		SDL_SetRenderDrawColor(m_pWorldManager->getRenderer(), 0x00, 0x00, 0x00, 0xFF);
@@ -106,16 +178,8 @@ bool MenuScene::run()
 		// Render background A
 		m_Background.render(0, 0);
 
-
-		// Start Game Label
-		m_strStartGameLabel.str("");			
-		m_strStartGameLabel << "Press Enter";
-		if (!m_StartLabel.loadFromRenderedText(m_strStartGameLabel.str().c_str(), m_TextColor, m_Font))
-		{
-			printf("Unable to render FPS texture!\n");
-		}
-		m_StartLabel.render(SCREEN_WIDTH * .5 - m_StartLabel.getWidth() * .5, SCREEN_HEIGHT * .75);
-				
+		m_StartButton->render();
+		
 		SDL_RenderPresent(m_pWorldManager->getRenderer());
 
 		// -------------------- DELAY --------------------
@@ -133,7 +197,6 @@ void MenuScene::cleanup()
 {
 	printf("MenuScene: Destroying Assets\n");
 	//Free loaded images
-	m_StartLabel.free();		
 	m_Background.free();		
 		
 	//Free global font

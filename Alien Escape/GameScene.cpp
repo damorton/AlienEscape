@@ -1,7 +1,9 @@
 #include "GameScene.h"
+#include "MenuScene.h"
 #include "WorldManager.h"
 #include "Definitions.h"
 #include "Player.h"
+#include "Enemy.h"
 #include "Timer.h"
 #include "HUD.h"
 
@@ -36,6 +38,9 @@ bool GameScene::init()
 	// Create player
 	m_pPlayer = new Player();
 	m_pWorldManager->registerPlayer(m_pPlayer);
+	
+	// Enemies
+	m_pEnemyAlien = new Enemy();
 
 	m_pHUD = new HUD();
 
@@ -47,7 +52,7 @@ bool GameScene::init()
 bool GameScene::run()
 {
 	// run game loop
-	this->update();	
+	this->update();
 	return 0;
 }
 
@@ -62,6 +67,13 @@ bool GameScene::loadMedia()
 		printf("Failed to load walking animation texture!\n");
 		success = false;
 	}	
+
+	if (!m_pEnemyAlien->getSprite()->loadFromFile("Sprites/EnemyAlien.png"))
+	{
+		printf("Failed to load walking animation texture!\n");
+		success = false;
+	}
+
 
 	// Fonts
 	m_Font = TTF_OpenFont("Fonts/go3v2.ttf", 28);
@@ -96,7 +108,21 @@ bool GameScene::loadMedia()
 	return success;
 }
 
-void GameScene::update()
+void GameScene::pause()
+{
+	if (thisSceneState == PAUSED)
+	{
+		thisSceneState = RUNNING;
+		deltaTimer->unpause();
+	}
+	else
+	{
+		thisSceneState = PAUSED;
+		deltaTimer->pause();
+	}	
+}
+
+bool GameScene::update()
 {	
 	
 	SDL_Event e;
@@ -106,7 +132,7 @@ void GameScene::update()
 	float midgroundBscrollingOffset = SCREEN_WIDTH;
 	Timer fpsTimer;
 	Timer capTimer;
-	Timer deltaTimer;
+	deltaTimer = new Timer();
 	fpsTimer.start();	
 	int countedFrames = 0;	
 
@@ -118,40 +144,22 @@ void GameScene::update()
 
 		// -------------------- INPUT --------------------	
 		while (SDL_PollEvent(&e) != 0)
-		{			
+		{	
 			// Game World Input
 			if (e.type == SDL_QUIT)
 			{
 				thisSceneState = DESTROY;
-			}		
-						
+			}			
 			
-			// Scene input
-			if (e.type == SDL_KEYDOWN && e.key.repeat == 0)
-			{
-				// If the enter key was pressed Pause the game
-				if (e.key.keysym.sym == SDLK_RETURN)
-				{
-					if (m_pWorldManager->getInstance()->getRunningScene()->isPaused())
-					{
-						m_pWorldManager->getInstance()->getRunningScene()->resume();
-						deltaTimer.unpause();
-					}
-					else
-					{
-						m_pWorldManager->getInstance()->getRunningScene()->pause();
-						deltaTimer.pause();
-					}					
-				}
-			}
-			
-
 			// Game object input
 			if (!m_pWorldManager->getInstance()->getRunningScene()->isPaused())
 			{
 				// Characters
 				m_pPlayer->handleEvent(e);
+				m_pEnemyAlien->handleEvent(e);
 			}
+
+			m_pHUD->handleEvent(e);
 			
 		}	
 
@@ -170,9 +178,10 @@ void GameScene::update()
 			}
 			m_pWorldManager->setAverageFPS(m_fAverageFPS);
 
-			float timeStep = deltaTimer.getTicks() / 1000.f;
+			float timeStep = deltaTimer->getTicks() / 1000.f;
 			m_pPlayer->move(timeStep);
-			deltaTimer.start();
+			m_pEnemyAlien->move(timeStep);
+			deltaTimer->start();
 		
 			// Scroll background A
 			backgroundAscrollingOffset -= m_pWorldManager->getGameWorldSpeed();
@@ -203,6 +212,18 @@ void GameScene::update()
 			}
 
 
+
+			// Collisions
+			if (m_pPlayer->getSprite()->checkCollision(m_pEnemyAlien->getSprite()->getBoundBox()))
+			{
+				printf("Collision Detected: Player and Enemy\n");
+				// Game over
+				MenuScene* menuScene = new MenuScene();
+				WorldManager::getInstance()->runWithScene(menuScene);
+				return 0;
+			}
+
+
 			// -------------------- RENDER --------------------
 			SDL_SetRenderDrawColor(m_pWorldManager->getRenderer(), 0x00, 0x00, 0x00, 0xFF);
 			SDL_RenderClear(m_pWorldManager->getRenderer());
@@ -220,6 +241,7 @@ void GameScene::update()
 			m_MidgroundB.render(midgroundBscrollingOffset, 0);
 
 			m_pPlayer->render();
+			m_pEnemyAlien->render();
 			m_pHUD->render();
 			SDL_RenderPresent(m_pWorldManager->getRenderer());
 		}
@@ -235,6 +257,7 @@ void GameScene::update()
 				
 	}
 	// -------------------- GAME LOOP END --------------------
+	return 0;
 }
 
 void GameScene::cleanup()
@@ -252,7 +275,13 @@ void GameScene::cleanup()
 	// Delete Player	
 	delete m_pPlayer;
 	m_pPlayer = nullptr;
-	
+
+	delete m_pEnemyAlien;
+	m_pEnemyAlien = nullptr;
+
+	delete deltaTimer;
+	deltaTimer = nullptr;
+
 	delete m_pHUD;
 	m_pHUD = nullptr;
 

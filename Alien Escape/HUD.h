@@ -3,6 +3,7 @@
 #include "Sprite.h"
 
 class WorldManager;
+class Label;
 
 class HUD
 {
@@ -13,6 +14,7 @@ public:
 	bool init();
 	bool loadMedia();
 	void cleanup();
+	void handleEvent(SDL_Event& e);
 private:
 	WorldManager* m_pWorldManager;
 	
@@ -25,6 +27,8 @@ private:
 	std::stringstream gravityText;
 	Sprite m_DistanceTextTexture;
 	std::stringstream distanceText;
+
+	Label* m_PauseButton;
 
 	TTF_Font* m_Font = nullptr;
 	SDL_Color m_TextColor;

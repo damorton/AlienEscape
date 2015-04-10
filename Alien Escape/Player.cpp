@@ -114,7 +114,7 @@ void Player::handleEvent(SDL_Event& e)
 }
 
 void Player::jump()
-{
+{	
 	if (!m_bIsJumping)
 	{
 		m_nNumberOfJumps++;
@@ -128,6 +128,7 @@ void Player::jump()
 			m_VelY += MAX_JUMP_VELOCITY;		
 		}
 	}
+	printf("Player:: Jump velocity %d\n", m_VelY);
 }
 
 void Player::move(float timeStep)
@@ -137,27 +138,14 @@ void Player::move(float timeStep)
 		m_bBoostEnabled = false;
 		m_pWorldManager->setGameWorldSpeed(m_fGameSpeed);		
 	}	
-
 	
-
 	m_fDeltaTime = timeStep;	
-	/*
-	//Move the dot left or right
-	m_PosX += m_VelX * timeStep;
-		
-	//If the dot went too far to the left or right
-	if (m_PosX < 0)
-	{
-		m_PosX = 0;
-	}
-	else if (m_PosX > SCREEN_WIDTH - m_PlayerSprite.getWidth() / WALKING_ANIMATION_FRAMES)
-	{
-		m_PosX = SCREEN_WIDTH - m_PlayerSprite.getWidth() / WALKING_ANIMATION_FRAMES;
-	}
-	*/
-
+	
 	//Move the player up or down
 	m_PosY += m_VelY * timeStep;
+	// Update bounding Box
+	m_PlayerSprite.getBoundBox()->x = m_PosX;
+	m_PlayerSprite.getBoundBox()->y = m_PosY;
 
 	//If the player went too far up or down
 	if (m_PosY < FLOOR_POSITION)
@@ -199,7 +187,7 @@ void Player::move(float timeStep)
 }
 
 void Player::render()
-{	
+{		
 	//Render current frame
 	SDL_Rect* currentClip = &gSpriteClips[m_nFrame / SPRITE_ANIMATION_SPEED];
 	m_PlayerSprite.render((int)m_PosX, (int)m_PosY, currentClip,NULL, NULL, m_pWorldManager->getRendererFlip());

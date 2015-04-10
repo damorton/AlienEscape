@@ -7,6 +7,7 @@
 #include "Sprite.h"
 
 class WorldManager; 
+class Label;
 
 class MenuScene : public  Scene
 {
@@ -17,6 +18,7 @@ public:
 	virtual bool run();
 	virtual void cleanup();
 	virtual bool loadMedia();
+	virtual void startGame();
 	
 private:
 	WorldManager* m_pWorldManager;
@@ -24,8 +26,7 @@ private:
 	Sprite m_Background;
 	SDL_Color m_TextColor;
 
-	Sprite m_StartLabel;
-	std::stringstream m_strStartGameLabel;
+	Label* m_StartButton;	
 };
 
 

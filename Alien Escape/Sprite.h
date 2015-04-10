@@ -5,7 +5,11 @@
 #include <SDL_ttf.h>
 #include <string>
 
-class Sprite
+#include "Node.h"
+
+class WorldManager;
+
+class Sprite : public Node
 {
 public:
 	Sprite();
@@ -20,6 +24,7 @@ public:
 	int getWidth();
 	int getHeight();
 private:
+	WorldManager* m_pWorldManager;
 	SDL_Texture* mTexture;
 	int mWidth;
 	int mHeight;

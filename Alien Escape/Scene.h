@@ -11,8 +11,8 @@ public:
 	virtual bool run();
 	virtual void cleanup();
 	virtual ~Scene(); //deconstructor
-	void pause(){ thisSceneState = PAUSED; };
-	void resume(){ thisSceneState = RUNNING; };
+	virtual void pause(){ thisSceneState = PAUSED; };
+	virtual void resume(){ thisSceneState = RUNNING; };
 	bool isPaused(){ if (thisSceneState == PAUSED) return true; else return false; };
 
 protected:

@@ -8,8 +8,10 @@
 #include "Sprite.h"
 
 class Player;
+class Enemy;
 class WorldManager; 
 class HUD;
+class Timer;
 
 class GameScene : public Scene
 {
@@ -19,8 +21,8 @@ public:
 	virtual bool init();
 	virtual bool run();
 	virtual void cleanup();	
-
-	void update(); 
+	virtual void pause();
+	bool update();
 	bool loadMedia();	
 
 	float getAverageFPS(){ return m_fAverageFPS; };
@@ -31,11 +33,13 @@ private:
 
 	//std::shared_ptr<Player> m_pPlayer;
 	Player* m_pPlayer = nullptr;
+	Enemy* m_pEnemyAlien = nullptr;
+
 	HUD* m_pHUD;
 
 	SDL_Color m_TextColor;
 
-
+	Timer* deltaTimer;
 	
 	Sprite m_BackgroundA;
 	Sprite m_BackgroundB;

@@ -7,7 +7,8 @@ Sprite::Sprite()
 {	
 	mTexture = NULL;
 	mWidth = 0;
-	mHeight = 0;
+	mHeight = 0;	
+	m_pWorldManager = WorldManager::getInstance();
 }
 
 Sprite::~Sprite()
@@ -27,7 +28,7 @@ bool Sprite::loadFromFile(std::string path)
 	else
 	{
 		SDL_SetColorKey(loadedSurface, SDL_TRUE, SDL_MapRGB(loadedSurface->format, 0, 0xFF, 0xFF));
-		newTexture = SDL_CreateTextureFromSurface(WorldManager::getInstance()->getRenderer(), loadedSurface);
+		newTexture = SDL_CreateTextureFromSurface(m_pWorldManager->getRenderer(), loadedSurface);
 		if (newTexture == NULL)
 		{
 			printf("Unable to create texture from %s! SDL Error: %s\n", path.c_str(), SDL_GetError());
@@ -35,7 +36,7 @@ bool Sprite::loadFromFile(std::string path)
 		else
 		{
 			mWidth = loadedSurface->w;
-			mHeight = loadedSurface->h;
+			mHeight = loadedSurface->h;			
 		}
 		SDL_FreeSurface(loadedSurface);
 	}
@@ -50,7 +51,7 @@ bool Sprite::loadFromRenderedText(std::string textureText, SDL_Color textColor, 
 	SDL_Surface* textSurface = TTF_RenderText_Solid(font, textureText.c_str(), textColor);
 	if (textSurface != NULL)
 	{
-		mTexture = SDL_CreateTextureFromSurface(WorldManager::getInstance()->getRenderer(), textSurface);
+		mTexture = SDL_CreateTextureFromSurface(m_pWorldManager->getRenderer(), textSurface);
 		if (mTexture == NULL)
 		{
 			printf("Unable to create texture from rendered text! SDL Error: %s\n", SDL_GetError());
@@ -58,7 +59,7 @@ bool Sprite::loadFromRenderedText(std::string textureText, SDL_Color textColor, 
 		else
 		{
 			mWidth = textSurface->w;
-			mHeight = textSurface->h;
+			mHeight = textSurface->h;			
 		}
 		SDL_FreeSurface(textSurface);
 	}
@@ -102,8 +103,12 @@ void Sprite::render(int x, int y, SDL_Rect* clip, double angle, SDL_Point* cente
 	{
 		renderQuad.w = clip->w;
 		renderQuad.h = clip->h;
+
+		// Bounding Box size
+		m_BoundingBox->w = renderQuad.w;
+		m_BoundingBox->h = renderQuad.h;
 	}
-	SDL_RenderCopyEx(WorldManager::getInstance()->getRenderer(), mTexture, clip, &renderQuad, angle, center, flip);
+	SDL_RenderCopyEx(m_pWorldManager->getRenderer(), mTexture, clip, &renderQuad, angle, center, flip);
 }
 
 int Sprite::getWidth()
