@@ -79,7 +79,7 @@ void Player::handleEvent(SDL_Event& e)
 			{				
 				m_bIsBoosting = false;
 				m_pWorldManager->setGameWorldSpeed(m_fGameSpeed);
-				m_TBoostTimer->pause();
+				m_TBoostTimer->pause();				
 			}
 		}		
 	}
@@ -138,8 +138,16 @@ void Player::move(float timeStep)
 	{
 		m_bBoostEnabled = false;
 		m_pWorldManager->setGameWorldSpeed(m_fGameSpeed);		
+		m_TBoostTimer->unpause();
 	}	
 	
+	//printf("Boost timer : %d\n", m_TBoostTimer->getTicks());
+	if (m_TBoostTimer->getTicks() > 4000)
+	{
+		m_bBoostEnabled = true;
+		m_TBoostTimer->start();
+		m_TBoostTimer->pause();
+	}
 	m_fDeltaTime = timeStep;	
 	
 	//Move the player up or down
@@ -194,8 +202,9 @@ void Player::move(float timeStep)
 	*/
 
 	// Distance
-	m_nDistance++;
+	m_nDistance += (m_bIsBoosting) ? 5 : 1;
 	m_nDistanceScore = m_nDistance / SCREEN_FPS;
+
 	if (m_nDistanceScore > 0 && m_nDistanceScore % 2 == 0 && m_pWorldManager->getGameWorldSpeed() < MAX_SPEED) m_pWorldManager->increaseGameWorldSpeed();
 }
 

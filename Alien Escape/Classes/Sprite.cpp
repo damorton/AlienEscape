@@ -13,6 +13,7 @@ Sprite::Sprite()
 
 Sprite::~Sprite()
 {
+	printf("Sprite destroyed\n");
 	free();
 }
 

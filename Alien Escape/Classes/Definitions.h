@@ -18,7 +18,7 @@
 // Game world
 #define GRAVITY 100
 #define WORLD_SPEED 4.0f
-#define MAX_SPEED 10.0f
+#define MAX_SPEED 15.0f
 #define SPEED_INC 0.02f
 #define SPEED_DEC 0.02f
 #define FLOOR_POSITION 30

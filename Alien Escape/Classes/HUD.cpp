@@ -39,7 +39,7 @@ bool HUD::loadMedia()
 	bool success = true;
 	
 	// Fonts
-	m_Font = TTF_OpenFont(m_pWorldManager->readDAO("GameFont").c_str(), 28);
+	m_Font = TTF_OpenFont(m_pWorldManager->readDAO("GameFont").c_str(), 24);
 	if (m_Font == NULL)
 	{
 		printf("Failed to load lazy font! SDL_ttf Error: %s\n", TTF_GetError());

@@ -26,6 +26,7 @@ private:
 	Sprite m_Background;
 	SDL_Color m_TextColor;
 	Label* m_StartButton;	
+	Label* m_Title;
 };
 
 
