@@ -1,8 +1,7 @@
 #include "WorldManager.h"
-#include "Scene.h"
+#include "MenuScene.h"
 #include "Definitions.h"
-#include "DAO\GameDAO.h"
-#include "DAO\StoryPoint.h"
+#include "Enemy.h"
 #include <iostream>
 
 WorldManager* WorldManager::m_Instance = 0;
@@ -12,6 +11,11 @@ WorldManager* WorldManager::getInstance()
 	if (m_Instance == nullptr)
 		m_Instance = new WorldManager();
 	return m_Instance;
+}
+
+WorldManager::~WorldManager()
+{
+	this->cleanUp();
 }
 
 WorldManager::WorldManager()
@@ -27,25 +31,30 @@ bool WorldManager::init()
 	bool success = true;
 
 	// Game DAO
-	IGameDAO* dao = new GameDAO();
+	if (m_pGameDAO == nullptr)
+	{
+		m_pGameDAO = new GameDAO();
+	}
+	
 	if (!isXMLFileExist())
 	{
-		dao->create();
-		loadDefaultConfig(dao);
+		m_pGameDAO->create();
+		loadDefaultConfig(m_pGameDAO);
 	}
 
-	std::shared_ptr<std::vector<StoryPoint>> storyPoints = dao->read();
+	/*
+	std::shared_ptr<std::vector<StoryPoint>> resources = m_pGameDAO->read();		
 
-	std::cout << storyPoints->at(0).getStoryText()->getText() << std::endl;
-
-	for (int i = 0; i<storyPoints->at(0).getStoryChoices()->size(); i++)
+	for (int i = 0; i < resources->size(); i++)
 	{
-		std::cout << storyPoints->at(0).getStoryChoices()->at(i).getText() << std::endl;
+		for (int j = 0; j < resources->at(i).getStoryChoices()->size(); j++)
+		{
+			std::cout << resources->at(i).getStoryChoices()->at(j).getName() << " -> " << resources->at(i).getStoryChoices()->at(j).getValue() << std::endl;
+		}
 	}
-
-
-
-	//dao->update(storyPoints);
+	*/
+	
+	//m_pGameDAO->update(resources);
 
 	if (SDL_Init(SDL_INIT_VIDEO) < 0)
 	{
@@ -58,7 +67,7 @@ bool WorldManager::init()
 		{
 			printf("Warning: Linear texture filtering not enabled!");
 		}
-		m_Window = SDL_CreateWindow("Alien Escape", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
+		m_Window = SDL_CreateWindow(this->readDAO("GameName").c_str(), SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
 		if (m_Window == NULL)
 		{
 			printf("Window could not be created! SDL Error: %s\n", SDL_GetError());
@@ -101,6 +110,22 @@ bool WorldManager::init()
 	return success;
 }
 
+std::string WorldManager::readDAO(std::string name)
+{
+	std::shared_ptr<std::vector<StoryPoint>> resources = m_pGameDAO->read();
+
+	for (int i = 0; i < resources->size(); i++)
+	{
+		for (int j = 0; j < resources->at(i).getStoryChoices()->size(); j++)
+		{
+			if (resources->at(i).getStoryChoices()->at(j).getName() == name)
+			{
+				return resources->at(i).getStoryChoices()->at(j).getValue();
+			}						
+		}
+	}
+}
+
 bool WorldManager::isXMLFileExist()
 {	
 	std::string filepath = "";
@@ -121,20 +146,72 @@ bool WorldManager::isXMLFileExist()
 
 void WorldManager::loadDefaultConfig(IGameDAO* dao)
 {
-	std::shared_ptr<std::vector<StoryPoint>> storyPoints = dao->read();
+	std::shared_ptr<std::vector<StoryPoint>> resources = dao->read();
 
-	StoryPoint storyPoint;
-	storyPoint.setStoryText("You Open on a courtyard, it is dark. You see a Door");
-	storyPoint.addStoryChoice("1. Open Door");
-	storyPoint.addStoryChoice("2. Run Away");
+	// Menu Scene Config
+	StoryPoint gameConfig;
+	gameConfig.setName("GameConfig");
+	gameConfig.addFilePath("GameName", "Alien Escape");	
+	gameConfig.addFilePath("GameFont", "Resources/Fonts/go3v2.ttf");
+	resources->push_back(gameConfig);
 
-	storyPoints->push_back(storyPoint);
-	dao->update(storyPoints);
+	// Menu Scene Config
+	StoryPoint menuSceneConfig;	
+	menuSceneConfig.setName("MenuScene");	
+	menuSceneConfig.addFilePath("MenuSceneStartLabel", "Start Game");
+	menuSceneConfig.addFilePath("MenuSceneBackground", "Resources/Backgrounds/MenuBackground.png");	
+	resources->push_back(menuSceneConfig);
+
+	// Menu Scene Config
+	StoryPoint gameSceneConfig;
+	gameSceneConfig.setName("GameScene");
+	gameSceneConfig.addFilePath("GameScenePlayer", "Resources/Sprites/Player.png");
+	gameSceneConfig.addFilePath("GameSceneEnemyAlien", "Resources/Sprites/EnemyAlien.png");
+	gameSceneConfig.addFilePath("GameSceneBackgroundA", "Resources/Backgrounds/BackgroundA.png");
+	gameSceneConfig.addFilePath("GameSceneBackgroundB", "Resources/Backgrounds/BackgroundB.png");
+	gameSceneConfig.addFilePath("GameSceneMidgroundA", "Resources/Backgrounds/MidgroundA.png");
+	gameSceneConfig.addFilePath("GameSceneMidgroundB", "Resources/Backgrounds/MidgroundB.png");	
+	resources->push_back(gameSceneConfig);
+
+	// HUD Config
+	StoryPoint HUDConfig;
+	HUDConfig.setName("HUDConfig");
+	HUDConfig.addFilePath("HUDConfigPause", "Resources/Buttons/Pause.png");
+	resources->push_back(HUDConfig);
+
+	dao->update(resources);
 }
 
-WorldManager::~WorldManager()
+bool WorldManager::checkCollisions()
 {
-	this->cleanUp();
+	bool collision = false;
+
+	for (int i = 0; i < m_vpGameNodes.size(); i++)
+	{
+		Enemy* tempEnemy = (Enemy*)m_vpGameNodes.at(i);
+		if (m_pPlayer->getSprite()->checkCollision(tempEnemy->getSprite()->getBoundBox()) && tempEnemy->getState() == Character::ALIVE)
+		{		
+			printf("Collision Detected!\n");
+			tempEnemy->setState(Character::DEAD);
+
+			m_pPlayer->applyDamage(1);
+			if (m_pPlayer->getLives() < 0)
+			{
+				m_pPlayer->setState(Character::DEAD);
+			}				
+			
+			if (m_pPlayer->getState() == Character::DEAD)
+			{
+				collision = true;
+				m_vpGameNodes.clear();
+				// Game over
+				MenuScene* menuScene = new MenuScene();
+				WorldManager::getInstance()->runWithScene(menuScene);
+			}			
+		}
+	}
+
+	return collision;
 }
 
 void WorldManager::resetGame()

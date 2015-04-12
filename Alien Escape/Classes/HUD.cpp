@@ -39,7 +39,7 @@ bool HUD::loadMedia()
 	bool success = true;
 	
 	// Fonts
-	m_Font = TTF_OpenFont("Resources/Fonts/go3v2.ttf", 28);
+	m_Font = TTF_OpenFont(m_pWorldManager->readDAO("GameFont").c_str(), 28);
 	if (m_Font == NULL)
 	{
 		printf("Failed to load lazy font! SDL_ttf Error: %s\n", TTF_GetError());
@@ -118,30 +118,33 @@ void HUD::render()
 	
 	m_PauseButton->render();
 
-	// Game speed
-	m_ssGameSpeedText.str("");
-	m_ssGameSpeedText << "Speed : " << m_pWorldManager->getGameWorldSpeed();
-	if (!m_GameSpeedTextTexture.loadFromRenderedText(m_ssGameSpeedText.str().c_str(), m_TextColor, m_Font))
+	if (DEBUG)
 	{
-		printf("Unable to render FPS texture!\n");
-	}
-	m_GameSpeedTextTexture.render(PADDING, SCREEN_HEIGHT - PADDING - m_FPSTextTexture.getHeight() - m_GameSpeedTextTexture.getHeight());
+		// Game speed
+		m_ssGameSpeedText.str("");
+		m_ssGameSpeedText << "Speed : " << m_pWorldManager->getGameWorldSpeed();
+		if (!m_GameSpeedTextTexture.loadFromRenderedText(m_ssGameSpeedText.str().c_str(), m_TextColor, m_Font))
+		{
+			printf("Unable to render texture!\n");
+		}
+		m_GameSpeedTextTexture.render(PADDING, SCREEN_HEIGHT - PADDING - m_FPSTextTexture.getHeight() - m_GameSpeedTextTexture.getHeight());
 
-	//Set text to be rendered
-	fpsText.str("");
-	fpsText << "FPS: " << m_pWorldManager->getAverageFPS();
-	if (!m_FPSTextTexture.loadFromRenderedText(fpsText.str().c_str(), m_TextColor, m_Font))
-	{
-		printf("Unable to render FPS texture!\n");
+		//Set text to be rendered
+		fpsText.str("");
+		fpsText << "FPS: " << m_pWorldManager->getAverageFPS();
+		if (!m_FPSTextTexture.loadFromRenderedText(fpsText.str().c_str(), m_TextColor, m_Font))
+		{
+			printf("Unable to render texture!\n");
+		}
+		m_FPSTextTexture.render(PADDING, SCREEN_HEIGHT - PADDING - m_FPSTextTexture.getHeight());
 	}
-	m_FPSTextTexture.render(PADDING, SCREEN_HEIGHT - PADDING - m_FPSTextTexture.getHeight());
-		
+	
 	// Distance
 	distanceText.str("");
 	distanceText << "Distance: " << m_pWorldManager->getPlayer()->getDistance() << "m";
 	if (!m_DistanceTextTexture.loadFromRenderedText(distanceText.str().c_str(), m_TextColor, m_Font))
 	{
-		printf("Unable to render FPS texture!\n");
+		printf("Unable to render texture!\n");
 	}
 	m_DistanceTextTexture.render(PADDING, PADDING);
 
@@ -151,16 +154,26 @@ void HUD::render()
 	else gravityText << "Gravity: UP";
 	if (!m_GravityTextTexture.loadFromRenderedText(gravityText.str().c_str(), m_TextColor, m_Font))
 	{
-		printf("Unable to render FPS texture!\n");
+		printf("Unable to render texture!\n");
 	}
 	m_GravityTextTexture.render(PADDING, PADDING + m_DistanceTextTexture.getHeight() + PADDING);
+
+	// Lives Info
+	livesText.str("");
+	livesText << "Lives: " << m_pWorldManager->getPlayer()->getLives();	
+	if (!m_LivesTexture.loadFromRenderedText(livesText.str().c_str(), m_TextColor, m_Font))
+	{
+		printf("Unable to render texture!\n");
+	}
+	m_LivesTexture.render(SCREEN_WIDTH - m_LivesTexture.getWidth() - PADDING, SCREEN_HEIGHT - PADDING - m_LivesTexture.getHeight());
 }
 
 void HUD::cleanup()
 {
-	m_FPSTextTexture.free();
+	m_FPSTextTexture.free();	
 	m_GravityTextTexture.free();
 	m_DistanceTextTexture.free();
+	m_LivesTexture.free();
 
 	delete m_PauseButton;
 	m_PauseButton = nullptr;

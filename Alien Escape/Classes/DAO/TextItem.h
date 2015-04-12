@@ -6,17 +6,18 @@ class TextItem
 {
 public:
 	TextItem(){}
-	TextItem(std::string thisText){text = thisText;}
+	TextItem(std::string thisText){ value = thisText; }
 	~TextItem(){}
 
-	std::string getText(){return text;}
-	void setText(const char* newText){text.assign(newText);}
+	std::string getValue(){ return value; }
+	std::string getName(){ return name; }
+	void setValue(const char* newText){ value.assign(newText); }
+	void setName(const char* newName){ name.assign(newName); }
 	
 	
 private:
-	std::string text;
-
-	
+	std::string value;
+	std::string name;	
 };
 
 

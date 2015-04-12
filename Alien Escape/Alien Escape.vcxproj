@@ -32,7 +32,6 @@
     <ClInclude Include="Classes\DAO\StoryChoice.h" />
     <ClInclude Include="Classes\DAO\GameDAO.h" />
     <ClInclude Include="Classes\DAO\StoryPoint.h" />
-    <ClInclude Include="Classes\DAO\StoryText.h" />
     <ClInclude Include="Classes\DAO\TextItem.h" />
     <ClInclude Include="Classes\DAO\tinyxml2.h" />
     <ClInclude Include="Classes\Definitions.h" />

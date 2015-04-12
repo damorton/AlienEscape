@@ -1,10 +1,9 @@
 #ifndef GAMEDAO_H
 #define GAMEDAO_H
 
+#include "../Definitions.h"
 #include "StoryPoint.h"
 #include "tinyxml2.h"
-
-#define XMLDOC "Config.xml"
 
 class IGameDAO
 {
@@ -18,7 +17,7 @@ public:
 	virtual std::shared_ptr<std::vector<StoryPoint>> read() = 0;
 
 	//update
-	virtual void update(std::shared_ptr<std::vector<StoryPoint>> storyPoints) = 0;
+	virtual void update(std::shared_ptr<std::vector<StoryPoint>> resources) = 0;
 
 	//delete
 	virtual void del() = 0;
@@ -40,14 +39,12 @@ public:
 	std::shared_ptr<std::vector<StoryPoint>> read();
 
 	//update
-	void update(std::shared_ptr<std::vector<StoryPoint>> storyPoints);
+	void update(std::shared_ptr<std::vector<StoryPoint>> resources);
 
 	//delete
 	void del();
 private:
 
 };
-
-
 
 #endif

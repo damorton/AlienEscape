@@ -9,8 +9,7 @@ bool Enemy::init()
 	m_pWorldManager = WorldManager::getInstance();
 	//Initialize the offsets
 	m_PosX = SCREEN_WIDTH;
-	m_PosY = SCREEN_HEIGHT - m_EnemySprite.getHeight();
-	m_TBoostTimer = new Timer();
+	m_PosY = SCREEN_HEIGHT - m_pSprite.getHeight();
 
 	//Initialize the velocity
 	m_VelX = 0;
@@ -39,10 +38,10 @@ bool Enemy::init()
 	gSpriteClips[3].w = 32;
 	gSpriteClips[3].h = 103;
 
+	m_eState = ALIVE;
 	m_bIsJumping = false;
 	m_fDeltaTime = 0;	
-	m_TBoostTimer->start();
-	m_TBoostTimer->pause();
+
 	return true;
 }
 
@@ -82,17 +81,18 @@ void Enemy::move(float timeStep)
 	//Move the dot left or right
 	m_PosX += m_VelX * timeStep;
 	// Update bounding Box
-	m_EnemySprite.getBoundBox()->x = m_PosX;
+	m_pSprite.getBoundBox()->x = m_PosX;
 	
 	//If the dot went too far to the left or right
-	if (m_PosX < -m_EnemySprite.getWidth())
+	if (m_PosX < -m_pSprite.getWidth())
 	{
 		m_PosX = SCREEN_WIDTH;
+		m_eState = ALIVE;
 	}	
 	
 	//Move the Enemy up or down
 	m_PosY += m_VelY * timeStep;
-	m_EnemySprite.getBoundBox()->y = m_PosY;
+	m_pSprite.getBoundBox()->y = m_PosY;
 
 	//If the Enemy went too far up or down
 	if (m_PosY < FLOOR_POSITION)
@@ -101,9 +101,9 @@ void Enemy::move(float timeStep)
 		m_bIsJumping = false;
 		m_VelY = 0;
 	}
-	else if (m_PosY > SCREEN_HEIGHT - m_EnemySprite.getHeight() - ROOF_POSITION)
+	else if (m_PosY > SCREEN_HEIGHT - m_pSprite.getHeight() - ROOF_POSITION)
 	{
-		m_PosY = SCREEN_HEIGHT - m_EnemySprite.getHeight() - ROOF_POSITION;		
+		m_PosY = SCREEN_HEIGHT - m_pSprite.getHeight() - ROOF_POSITION;		
 		m_bIsJumping = false;
 		m_VelY = 0;
 	}
@@ -136,7 +136,7 @@ void Enemy::render()
 {
 	//Render current frame
 	SDL_Rect* currentClip = &gSpriteClips[m_nFrame / SPRITE_ANIMATION_SPEED];
-	m_EnemySprite.render((int)m_PosX, (int)m_PosY, currentClip, NULL, NULL, m_pWorldManager->getRendererFlip());
+	m_pSprite.render((int)m_PosX, (int)m_PosY, currentClip, NULL, NULL, m_pWorldManager->getRendererFlip());
 
 	//Go to next frame
 	++m_nFrame;
@@ -150,6 +150,6 @@ void Enemy::render()
 
 void Enemy::cleanUp()
 {
-	m_EnemySprite.free();
+	m_pSprite.free();
 }
 

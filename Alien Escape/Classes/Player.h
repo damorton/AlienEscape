@@ -11,8 +11,7 @@ class Timer;
 
 class Player : public Character
 {
-public:
-	typedef enum { ALIVE, DEAD } EPlayerState; // player state
+public:	
 	Player(){ this->init(); };
 	virtual ~Player(){ this->cleanUp(); };
 	bool init();
@@ -21,26 +20,20 @@ public:
 	void move(float timeStep);	
 	void render();
 	void jump();		
-	int getState(){ return m_ePlayerState; };	
-	Sprite* getSprite(){ return &m_PlayerSprite; };
+	Sprite* getSprite(){ return &m_pSprite; };
 	int getDistance(){ return m_nDistanceScore; };
-	void setState(int state){ m_ePlayerState = (EPlayerState)state; };		
-
-private:
-	EPlayerState m_ePlayerState; 
+	void applyDamage(int damage){ m_iLives -= damage; };
+	int getLives(){ return m_iLives; };
+private:	
 	WorldManager* m_pWorldManager;
-	Timer* m_TBoostTimer;	
-	int m_nFrame;
-	SDL_Rect gSpriteClips[WALKING_ANIMATION_FRAMES];
-	Sprite m_PlayerSprite;
-	bool m_bIsJumping;
-	float m_fDeltaTime;
+	Timer* m_TBoostTimer;			
 	int m_nNumberOfJumps;
 	int m_nDistance;
 	int m_nDistanceScore;
 	bool m_bIsBoosting;
 	bool m_bBoostEnabled;
 	float m_fGameSpeed;
+	int m_iLives = 3;
 	// reminder: release resources in cleanup
 };
 

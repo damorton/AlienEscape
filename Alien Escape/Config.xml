@@ -1,7 +1,21 @@
 <Config>
-    <MainMenu>
-        <Background>You Open on a courtyard, it is dark. You see a Door</Background>
-        <Font>1. Open Door</Font>
-        <Font>2. Run Away</Font>
-    </MainMenu>
+    <GameConfig>
+        <GameName>Alien Escape</GameName>
+        <GameFont>Resources/Fonts/go3v2.ttf</GameFont>
+    </GameConfig>
+    <MenuScene>
+        <MenuSceneStartLabel>Start Game</MenuSceneStartLabel>
+        <MenuSceneBackground>Resources/Backgrounds/MenuBackground.png</MenuSceneBackground>
+    </MenuScene>
+    <GameScene>
+        <GameScenePlayer>Resources/Sprites/Player.png</GameScenePlayer>
+        <GameSceneEnemyAlien>Resources/Sprites/EnemyAlien.png</GameSceneEnemyAlien>
+        <GameSceneBackgroundA>Resources/Backgrounds/BackgroundA.png</GameSceneBackgroundA>
+        <GameSceneBackgroundB>Resources/Backgrounds/BackgroundB.png</GameSceneBackgroundB>
+        <GameSceneMidgroundA>Resources/Backgrounds/MidgroundA.png</GameSceneMidgroundA>
+        <GameSceneMidgroundB>Resources/Backgrounds/MidgroundB.png</GameSceneMidgroundB>
+    </GameScene>
+    <HUDConfig>
+        <HUDConfigPause>Resources/Buttons/Pause.png</HUDConfigPause>
+    </HUDConfig>
 </Config>

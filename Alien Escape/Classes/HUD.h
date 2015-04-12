@@ -22,14 +22,15 @@ private:
 	std::stringstream fpsText;
 	Sprite m_GameSpeedTextTexture;
 	std::stringstream m_ssGameSpeedText;
-
 	Sprite m_GravityTextTexture;
 	std::stringstream gravityText;
 	Sprite m_DistanceTextTexture;
 	std::stringstream distanceText;
+	Sprite m_LivesTexture;
+	std::stringstream livesText;
 
 	Label* m_PauseButton;
 
 	TTF_Font* m_Font = nullptr;
-	SDL_Color m_TextColor;
+	SDL_Color m_TextColor;	
 };

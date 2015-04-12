@@ -32,19 +32,14 @@ bool GameScene::init()
 	bool success = true;
 	thisSceneState = RUNNING;
 	m_pWorldManager = WorldManager::getInstance();	
-	m_pWorldManager->resetGame();
-	//Set text color as White
+	m_pWorldManager->resetGame();	
 	m_TextColor = COLOR_WHITE;
-
-	// Create player
+		
 	m_pPlayer = new Player();
-	m_pWorldManager->registerPlayer(m_pPlayer);
-	
-	// Enemies
+	m_pWorldManager->registerPlayer(m_pPlayer);	
 	m_pEnemyAlien = new Enemy();
-
+	m_pWorldManager->registerGameNode((Node*)m_pEnemyAlien);
 	m_pHUD = new HUD();
-
 	m_pGravityTimer = new Timer();
 	
 	//std::shared_ptr<Player> m_pPlayer(new Player());
@@ -65,13 +60,13 @@ bool GameScene::loadMedia()
 	bool success = true;
 
 	// Sprites
-	if (!m_pPlayer->getSprite()->loadFromFile("Resources/Sprites/foo.png"))
+	if (!m_pPlayer->getSprite()->loadFromFile(m_pWorldManager->readDAO("GameScenePlayer")))
 	{
 		printf("Failed to load walking animation texture!\n");
 		success = false;
 	}	
 
-	if (!m_pEnemyAlien->getSprite()->loadFromFile("Resources/Sprites/EnemyAlien.png"))
+	if (!m_pEnemyAlien->getSprite()->loadFromFile(m_pWorldManager->readDAO("GameSceneEnemyAlien")))
 	{
 		printf("Failed to load walking animation texture!\n");
 		success = false;
@@ -79,7 +74,7 @@ bool GameScene::loadMedia()
 
 
 	// Fonts
-	m_Font = TTF_OpenFont("Resources/Fonts/go3v2.ttf", 28);
+	m_Font = TTF_OpenFont(m_pWorldManager->readDAO("GameFont").c_str(), 28);
 	if (m_Font == NULL)
 	{
 		printf("Failed to load lazy font! SDL_ttf Error: %s\n", TTF_GetError());
@@ -87,22 +82,22 @@ bool GameScene::loadMedia()
 	}	
 
 	//Load background texture
-	if (!m_BackgroundA.loadFromFile("Resources/Backgrounds/BackgroundA.png"))
+	if (!m_BackgroundA.loadFromFile(m_pWorldManager->readDAO("GameSceneBackgroundA")))
 	{
 		printf("Failed to load background texture!\n");
 		success = false;
 	}
-	if (!m_BackgroundB.loadFromFile("Resources/Backgrounds/BackgroundB.png"))
+	if (!m_BackgroundB.loadFromFile(m_pWorldManager->readDAO("GameSceneBackgroundB")))
 	{
 		printf("Failed to load background texture!\n");
 		success = false;
 	}
-	if (!m_MidgroundA.loadFromFile("Resources/Backgrounds/MidgroundA.png"))
+	if (!m_MidgroundA.loadFromFile(m_pWorldManager->readDAO("GameSceneMidgroundA")))
 	{
 		printf("Failed to load background texture!\n");
 		success = false;
 	}
-	if (!m_MidgroundB.loadFromFile("Resources/Backgrounds/MidgroundB.png"))
+	if (!m_MidgroundB.loadFromFile(m_pWorldManager->readDAO("GameSceneMidgroundB")))
 	{
 		printf("Failed to load background texture!\n");
 		success = false;
@@ -227,16 +222,24 @@ bool GameScene::update()
 			}
 
 			// Collisions
-			if (m_pPlayer->getSprite()->checkCollision(m_pEnemyAlien->getSprite()->getBoundBox()))
+			if (m_pWorldManager->checkCollisions())
+			{				
+				return 0;
+			}
+			/*
+			if (m_pPlayer->getSprite()->checkCollision(m_pEnemyAlien->getSprite()->getBoundBox()) && m_pEnemyAlien->getState() == Character::ALIVE)
 			{
 				printf("Collision Detected: Player and Enemy\n");
+				m_pPlayer->setState(Character::DEAD);
+				m_pEnemyAlien->setState(Character::DEAD);
+				
 				// Game over
 				MenuScene* menuScene = new MenuScene();
 				WorldManager::getInstance()->runWithScene(menuScene);
 				return 0;
-			}
-
-
+				
+			}*/
+			
 			// -------------------- RENDER --------------------
 			SDL_SetRenderDrawColor(m_pWorldManager->getRenderer(), 0x00, 0x00, 0x00, 0xFF);
 			SDL_RenderClear(m_pWorldManager->getRenderer());

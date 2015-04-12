@@ -7,12 +7,10 @@
 #include "Character.h"
 
 class WorldManager;
-class Timer;
 
 class Enemy : public Character
 {
-public:
-	typedef enum { ALIVE, DEAD } EEnemyState; // Enemy state
+public:	
 	Enemy(){ this->init(); };
 	virtual ~Enemy(){ this->cleanUp(); };
 	bool init();
@@ -20,20 +18,11 @@ public:
 	void handleEvent(SDL_Event& e);
 	void move(float timeStep);
 	void render();
-	void jump();
-	int getState(){ return m_eEnemyState; };
-	Sprite* getSprite(){ return &m_EnemySprite; };
-	void setState(int state){ m_eEnemyState = (EEnemyState)state; };
-private:
-	EEnemyState m_eEnemyState;
-	WorldManager* m_pWorldManager;
-	Timer* m_TBoostTimer;		
-	int m_nFrame;
-	SDL_Rect gSpriteClips[WALKING_ANIMATION_FRAMES];
-	Sprite m_EnemySprite;
-	bool m_bIsJumping;
-	float m_fDeltaTime;	
-	float m_fGameSpeed;
+	void jump();	
+	Sprite* getSprite(){ return &m_pSprite; };
+	
+private:	
+	WorldManager* m_pWorldManager;		
 	// reminder: release resources in cleanup
 };
 

@@ -6,13 +6,13 @@
 #include <SDL_ttf.h>
 
 // Config
-#define XMLDOC "game.xml"
+#define XMLDOC "Config.xml"
+#define DEBUG true
 #define SCREEN_WIDTH 640
 #define SCREEN_HEIGHT 480
 #define SCREEN_FPS 60
 #define SCREEN_TICK_PER_FRAME (1000 / SCREEN_FPS)
 #define PADDING 5
-#define DEBUG 1
 #define COLOR_WHITE {255, 255, 255, 255}
 
 // Game world
@@ -34,16 +34,6 @@ enum Gravity
 {
 	GRAVITY_UP,
 	GRAVITY_DOWN
-};
-
-enum GameStates
-{
-	STATE_NULL,
-	STATE_INTRO,
-	STATE_TITLE,	
-	STATE_PLAY,
-	STATE_PAUSE,
-	STATE_END,
 };
 
 #endif 

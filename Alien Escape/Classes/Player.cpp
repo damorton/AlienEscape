@@ -9,7 +9,7 @@ bool Player::init()
 	m_pWorldManager = WorldManager::getInstance();	
 	//Initialize the offsets
 	m_PosX = SCREEN_WIDTH * .10;
-	m_PosY = SCREEN_HEIGHT - m_PlayerSprite.getHeight();
+	m_PosY = SCREEN_HEIGHT - m_pSprite.getHeight();
 	m_TBoostTimer = new Timer();
 	//Initialize the velocity
 	m_VelX = 0;
@@ -38,6 +38,7 @@ bool Player::init()
 	gSpriteClips[3].w = 32;
 	gSpriteClips[3].h = 103;
 
+	m_eState = ALIVE;
 	m_bIsJumping = false;
 	m_fDeltaTime = 0;
 	m_nNumberOfJumps = 0;
@@ -144,8 +145,8 @@ void Player::move(float timeStep)
 	//Move the player up or down
 	m_PosY += m_VelY * timeStep;
 	// Update bounding Box
-	m_PlayerSprite.getBoundBox()->x = m_PosX;
-	m_PlayerSprite.getBoundBox()->y = m_PosY;
+	m_pSprite.getBoundBox()->x = m_PosX;
+	m_pSprite.getBoundBox()->y = m_PosY;
 
 	//If the player went too far up or down
 	if (m_PosY < FLOOR_POSITION)
@@ -154,9 +155,9 @@ void Player::move(float timeStep)
 		m_bIsJumping = false;
 		m_VelY = 0;
 	}
-	else if (m_PosY > SCREEN_HEIGHT - m_PlayerSprite.getHeight() - ROOF_POSITION)
+	else if (m_PosY > SCREEN_HEIGHT - m_pSprite.getHeight() - ROOF_POSITION)
 	{
-		m_PosY = SCREEN_HEIGHT - m_PlayerSprite.getHeight() - ROOF_POSITION;
+		m_PosY = SCREEN_HEIGHT - m_pSprite.getHeight() - ROOF_POSITION;
 		m_bIsJumping = false;
 		m_VelY = 0;
 	}
@@ -202,7 +203,7 @@ void Player::render()
 {		
 	//Render current frame
 	SDL_Rect* currentClip = &gSpriteClips[m_nFrame / SPRITE_ANIMATION_SPEED];
-	m_PlayerSprite.render((int)m_PosX, (int)m_PosY, currentClip,NULL, NULL, m_pWorldManager->getRendererFlip());
+	m_pSprite.render((int)m_PosX, (int)m_PosY, currentClip,NULL, NULL, m_pWorldManager->getRendererFlip());
 	
 	//Go to next frame
 	++m_nFrame;
@@ -216,6 +217,6 @@ void Player::render()
 
 void Player::cleanUp()
 {		
-	m_PlayerSprite.free();	
+	m_pSprite.free();	
 }
 

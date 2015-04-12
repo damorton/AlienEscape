@@ -6,7 +6,7 @@ class StoryChoice : public TextItem //: public Node
 {
 public:
 	StoryChoice(){}
-	StoryChoice(std::string thisText){setText(thisText.c_str());}
+	StoryChoice(std::string name, std::string thisText){ setName(name.c_str()); setValue(thisText.c_str()); }
 	~StoryChoice(){}	
 	
 private:

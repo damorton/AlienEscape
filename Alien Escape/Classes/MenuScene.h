@@ -25,7 +25,6 @@ private:
 	TTF_Font* m_Font = nullptr;
 	Sprite m_Background;
 	SDL_Color m_TextColor;
-
 	Label* m_StartButton;	
 };
 

@@ -72,9 +72,6 @@
     <ClInclude Include="Classes\DAO\StoryPoint.h">
       <Filter>Classes\DAO</Filter>
     </ClInclude>
-    <ClInclude Include="Classes\DAO\StoryText.h">
-      <Filter>Classes\DAO</Filter>
-    </ClInclude>
     <ClInclude Include="Classes\DAO\TextItem.h">
       <Filter>Classes\DAO</Filter>
     </ClInclude>
