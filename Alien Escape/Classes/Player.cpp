@@ -142,7 +142,7 @@ void Player::move(float timeStep)
 	}	
 	
 	//printf("Boost timer : %d\n", m_TBoostTimer->getTicks());
-	if (m_TBoostTimer->getTicks() > 4000)
+	if (m_TBoostTimer->getTicks() > 6000)
 	{
 		m_bBoostEnabled = true;
 		m_TBoostTimer->start();

@@ -158,6 +158,15 @@ void HUD::render()
 	}
 	m_GravityTextTexture.render(PADDING, PADDING + m_DistanceTextTexture.getHeight() + PADDING);
 
+	// Booster
+	boosterText.str("");
+	boosterText << "Boost : " << ((m_pWorldManager->getPlayer()->isBoostEnabled()) ? "ON" : "OFF");
+	if (!m_BoostTexture.loadFromRenderedText(boosterText.str().c_str(), m_TextColor, m_Font))
+	{
+		printf("Unable to render texture!\n");
+	}
+	m_BoostTexture.render(SCREEN_WIDTH - m_BoostTexture.getWidth() - PADDING, SCREEN_HEIGHT - PADDING - m_LivesTexture.getHeight() - m_GameSpeedTextTexture.getHeight());
+
 	// Lives Info
 	livesText.str("");
 	livesText << "Lives: " << m_pWorldManager->getPlayer()->getLives();	
@@ -166,6 +175,8 @@ void HUD::render()
 		printf("Unable to render texture!\n");
 	}
 	m_LivesTexture.render(SCREEN_WIDTH - m_LivesTexture.getWidth() - PADDING, SCREEN_HEIGHT - PADDING - m_LivesTexture.getHeight());
+
+	
 }
 
 void HUD::cleanup()
@@ -174,6 +185,8 @@ void HUD::cleanup()
 	m_GravityTextTexture.free();
 	m_DistanceTextTexture.free();
 	m_LivesTexture.free();
+	m_BoostTexture.free();
+	m_GameSpeedTextTexture.free();
 
 	delete m_PauseButton;
 	m_PauseButton = nullptr;

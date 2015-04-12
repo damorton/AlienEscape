@@ -26,6 +26,8 @@ private:
 	std::stringstream gravityText;
 	Sprite m_DistanceTextTexture;
 	std::stringstream distanceText;
+	Sprite m_BoostTexture;
+	std::stringstream boosterText;
 	Sprite m_LivesTexture;
 	std::stringstream livesText;
 

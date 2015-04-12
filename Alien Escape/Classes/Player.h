@@ -24,6 +24,7 @@ public:
 	int getDistance(){ return m_nDistanceScore; };
 	void applyDamage(int damage){ m_iLives -= damage; };
 	int getLives(){ return m_iLives; };
+	bool isBoostEnabled(){ return m_bBoostEnabled; };
 private:	
 	WorldManager* m_pWorldManager;
 	Timer* m_TBoostTimer;			

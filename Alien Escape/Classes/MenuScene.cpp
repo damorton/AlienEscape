@@ -40,7 +40,7 @@ bool MenuScene::loadMedia()
 	bool success = true;
 
 	// Fonts
-	m_Font = TTF_OpenFont(m_pWorldManager->readDAO("GameFont").c_str(), 32);
+	m_Font = TTF_OpenFont(m_pWorldManager->readDAO("GameFont").c_str(), 38);
 	if (m_Font == NULL)
 	{
 		printf("Failed to load lazy font! SDL_ttf Error: %s\n", TTF_GetError());
@@ -60,7 +60,7 @@ bool MenuScene::loadMedia()
 	m_TextColor = {255, 0, 89, 255};
 
 	m_Title = new Label(m_pWorldManager->readDAO("GameName"), m_TextColor, m_Font);
-	m_Title->setPosition(SCREEN_WIDTH * .5 - m_Title->getSprite()->getWidth() / 2, SCREEN_HEIGHT * .10);
+	m_Title->setPosition(SCREEN_WIDTH * .5 - m_Title->getSprite()->getWidth() / 2, SCREEN_HEIGHT * .05);
 
 	m_StartButton = new Label(m_pWorldManager->readDAO("MenuSceneStartLabel"), m_TextColor, m_Font);
 	m_StartButton->setPosition(SCREEN_WIDTH * .5 - m_StartButton->getSprite()->getWidth() / 2, SCREEN_HEIGHT * .85);
