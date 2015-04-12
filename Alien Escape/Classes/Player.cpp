@@ -8,7 +8,7 @@ bool Player::init()
 {		
 	m_pWorldManager = WorldManager::getInstance();	
 	//Initialize the offsets
-	m_PosX = SCREEN_WIDTH * .10;
+	m_PosX = SCREEN_WIDTH * .05;
 	m_PosY = SCREEN_HEIGHT - m_pSprite.getHeight();
 	m_TBoostTimer = new Timer();
 	//Initialize the velocity
@@ -129,7 +129,7 @@ void Player::jump()
 			m_VelY += MAX_JUMP_VELOCITY;		
 		}
 	}
-	printf("Player:: Jump velocity %d\n", m_VelY);
+	//printf("Player:: Jump velocity %d\n", m_VelY);
 }
 
 void Player::move(float timeStep)

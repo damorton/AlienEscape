@@ -30,25 +30,20 @@ public:
 private:			
 	WorldManager* m_pWorldManager;
 	TTF_Font* m_Font = nullptr;
-
 	//std::shared_ptr<Player> m_pPlayer;
 	Player* m_pPlayer = nullptr;
 	Enemy* m_pEnemyAlien = nullptr;
-
+	Enemy * m_pEnemyAlien2 = nullptr;
 	HUD* m_pHUD;
-
 	SDL_Color m_TextColor;
-
 	Timer* deltaTimer;
-	Timer* m_pGravityTimer;
-	
+	Timer* m_pGravityTimer;	
 	Sprite m_BackgroundA;
 	Sprite m_BackgroundB;
 	Sprite m_MidgroundA;
 	Sprite m_MidgroundB;
 		
-	float m_fAverageFPS;
-	
+	float m_fAverageFPS;	
 	Sprite m_FPSTextTexture;
 	std::stringstream fpsText;
 	Sprite m_GravityTextTexture;

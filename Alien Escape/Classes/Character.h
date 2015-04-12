@@ -16,6 +16,8 @@ public:
 	virtual void render() = 0;
 	int getState(){ return m_eState; };
 	void setState(int state){ m_eState = (EState)state; };
+
+	void setPositionX(int x){ m_PosX = x; };
 protected:
 	EState m_eState;
 	int m_PosX;

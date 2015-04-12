@@ -38,7 +38,10 @@ bool GameScene::init()
 	m_pPlayer = new Player();
 	m_pWorldManager->registerPlayer(m_pPlayer);	
 	m_pEnemyAlien = new Enemy();
+	m_pEnemyAlien->setPositionX(SCREEN_WIDTH * 1.5);
 	m_pWorldManager->registerGameNode((Node*)m_pEnemyAlien);
+	//m_pEnemyAlien2 = new Enemy();
+	//m_pWorldManager->registerGameNode((Node*)m_pEnemyAlien2);
 	m_pHUD = new HUD();
 	m_pGravityTimer = new Timer();
 	
@@ -66,11 +69,20 @@ bool GameScene::loadMedia()
 		success = false;
 	}	
 
+	// Enemy
 	if (!m_pEnemyAlien->getSprite()->loadFromFile(m_pWorldManager->readDAO("GameSceneEnemyAlien")))
 	{
 		printf("Failed to load walking animation texture!\n");
 		success = false;
 	}
+
+	/*
+	if (!m_pEnemyAlien2->getSprite()->loadFromFile(m_pWorldManager->readDAO("GameSceneEnemyAlien")))
+	{
+		printf("Failed to load walking animation texture!\n");
+		success = false;
+	}
+	*/
 
 
 	// Fonts
@@ -156,6 +168,7 @@ bool GameScene::update()
 				// Characters
 				m_pPlayer->handleEvent(e);
 				m_pEnemyAlien->handleEvent(e);
+				//m_pEnemyAlien2->handleEvent(e);
 			}
 
 			m_pHUD->handleEvent(e);
@@ -180,6 +193,7 @@ bool GameScene::update()
 			float timeStep = deltaTimer->getTicks() / 1000.f;
 			m_pPlayer->move(timeStep);
 			m_pEnemyAlien->move(timeStep);
+			//m_pEnemyAlien2->move(timeStep);
 			deltaTimer->start();
 		
 			// Scroll background A
@@ -211,12 +225,12 @@ bool GameScene::update()
 			}
 
 			// Gravity controls
-			if (m_pGravityTimer->getTicks() > 1000)
-			{
-				if (m_pEnemyAlien->getSprite()->getPositionX() - m_pPlayer->getSprite()->getPositionX() > 400)
+			if (m_pGravityTimer->getTicks() > 3000)
+			{	
+				if (m_pEnemyAlien->getSprite()->getPositionX() > SCREEN_WIDTH * .60)
 				{
-					m_pWorldManager->flipGravity();					
-				}
+					m_pWorldManager->flipGravity();
+				}				
 				m_pGravityTimer->stop();
 				m_pGravityTimer->start();				
 			}
@@ -258,6 +272,7 @@ bool GameScene::update()
 
 			m_pPlayer->render();
 			m_pEnemyAlien->render();
+			//m_pEnemyAlien2->render();
 			m_pHUD->render();
 			SDL_RenderPresent(m_pWorldManager->getRenderer());
 		}
@@ -294,6 +309,10 @@ void GameScene::cleanup()
 
 	delete m_pEnemyAlien;
 	m_pEnemyAlien = nullptr;
+
+	//delete m_pEnemyAlien2;
+	//m_pEnemyAlien2 = nullptr;
+
 
 	delete deltaTimer;
 	deltaTimer = nullptr;
