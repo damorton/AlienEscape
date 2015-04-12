@@ -102,14 +102,10 @@ bool WorldManager::init()
 }
 
 bool WorldManager::isXMLFileExist()
-{
-	// Check if the XML file exists by getting a writable path
-	// based on the device the game is running on.
+{	
 	std::string filepath = "";
 	filepath.append(XMLDOC);
-	//CCLOG("%s", filepath.c_str());
-
-	// Try and open the file at filepath
+		
 	FILE *fp;
 	fopen_s(&fp, filepath.c_str(), "r");
 	bool bRet = false;
