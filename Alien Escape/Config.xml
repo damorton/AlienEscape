@@ -1,0 +1,7 @@
+<Config>
+    <MainMenu>
+        <Background>You Open on a courtyard, it is dark. You see a Door</Background>
+        <Font>1. Open Door</Font>
+        <Font>2. Run Away</Font>
+    </MainMenu>
+</Config>

@@ -1,5 +1,5 @@
-#include "MenuScene.h"
-#include "WorldManager.h"
+#include "Classes/MenuScene.h"
+#include "Classes/WorldManager.h"
 
 int main(int argc, char* args[])
 {	

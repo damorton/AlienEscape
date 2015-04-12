@@ -11,32 +11,42 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Enemy.cpp" />
-    <ClCompile Include="GameScene.cpp" />
-    <ClCompile Include="HUD.cpp" />
-    <ClCompile Include="Label.cpp" />
+    <ClCompile Include="Classes\DAO\GameDAO.cpp" />
+    <ClCompile Include="Classes\DAO\StoryPoint.cpp" />
+    <ClCompile Include="Classes\DAO\tinyxml2.cpp" />
+    <ClCompile Include="Classes\Enemy.cpp" />
+    <ClCompile Include="Classes\GameScene.cpp" />
+    <ClCompile Include="Classes\HUD.cpp" />
+    <ClCompile Include="Classes\Label.cpp" />
+    <ClCompile Include="Classes\MenuScene.cpp" />
+    <ClCompile Include="Classes\Node.cpp" />
+    <ClCompile Include="Classes\Player.cpp" />
+    <ClCompile Include="Classes\Scene.cpp" />
+    <ClCompile Include="Classes\Sprite.cpp" />
+    <ClCompile Include="Classes\Timer.cpp" />
+    <ClCompile Include="Classes\WorldManager.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="MenuScene.cpp" />
-    <ClCompile Include="Node.cpp" />
-    <ClCompile Include="Player.cpp" />
-    <ClCompile Include="Scene.cpp" />
-    <ClCompile Include="Sprite.cpp" />
-    <ClCompile Include="Timer.cpp" />
-    <ClCompile Include="WorldManager.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Definitions.h" />
-    <ClInclude Include="Enemy.h" />
-    <ClInclude Include="GameScene.h" />
-    <ClInclude Include="HUD.h" />
-    <ClInclude Include="Label.h" />
-    <ClInclude Include="MenuScene.h" />
-    <ClInclude Include="Node.h" />
-    <ClInclude Include="Player.h" />
-    <ClInclude Include="Scene.h" />
-    <ClInclude Include="Sprite.h" />
-    <ClInclude Include="Timer.h" />
-    <ClInclude Include="WorldManager.h" />
+    <ClInclude Include="Classes\Character.h" />
+    <ClInclude Include="Classes\DAO\StoryChoice.h" />
+    <ClInclude Include="Classes\DAO\GameDAO.h" />
+    <ClInclude Include="Classes\DAO\StoryPoint.h" />
+    <ClInclude Include="Classes\DAO\StoryText.h" />
+    <ClInclude Include="Classes\DAO\TextItem.h" />
+    <ClInclude Include="Classes\DAO\tinyxml2.h" />
+    <ClInclude Include="Classes\Definitions.h" />
+    <ClInclude Include="Classes\Enemy.h" />
+    <ClInclude Include="Classes\GameScene.h" />
+    <ClInclude Include="Classes\HUD.h" />
+    <ClInclude Include="Classes\Label.h" />
+    <ClInclude Include="Classes\MenuScene.h" />
+    <ClInclude Include="Classes\Node.h" />
+    <ClInclude Include="Classes\Player.h" />
+    <ClInclude Include="Classes\Scene.h" />
+    <ClInclude Include="Classes\Sprite.h" />
+    <ClInclude Include="Classes\Timer.h" />
+    <ClInclude Include="Classes\WorldManager.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{91A079DC-082B-4E51-AC01-CF71ADF753A3}</ProjectGuid>
@@ -67,8 +77,8 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>C:\development\SDL\SDL2_ttf-2.0.12\include;C:\development\SDL\SDL2_image-2.0.0\include;C:\development\SDL\SDL2-2.0.3\include;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\development\SDL\SDL2_ttf-2.0.12\lib\x86;C:\development\SDL\SDL2_image-2.0.0\lib\x86;C:\development\SDL\SDL2-2.0.3\lib\x86;$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\projects\SDL\AlienEscape\Alien Escape\Libs\SDL2-2.0.3\include;C:\projects\SDL\AlienEscape\Alien Escape\Libs\SDL2_ttf-2.0.12\include;C:\projects\SDL\AlienEscape\Alien Escape\Libs\SDL2_image-2.0.0\include;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\projects\SDL\AlienEscape\Alien Escape\Libs\TinyXML2\lib;C:\projects\SDL\AlienEscape\Alien Escape\Libs\SDL2-2.0.3\lib\x86;C:\projects\SDL\AlienEscape\Alien Escape\Libs\SDL2_ttf-2.0.12\lib\x86;C:\projects\SDL\AlienEscape\Alien Escape\Libs\SDL2_image-2.0.0\lib\x86;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <IncludePath>C:\development\SDL\SDL2_ttf-2.0.12\include;C:\development\SDL\SDL2_image-2.0.0\include;C:\development\SDL\SDL2-2.0.3\include;$(IncludePath)</IncludePath>
@@ -82,7 +92,7 @@
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_image.lib;SDL2_ttf.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_image.lib;SDL2_ttf.lib;tinyxml2.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SubSystem>Console</SubSystem>
     </Link>
   </ItemDefinitionGroup>
