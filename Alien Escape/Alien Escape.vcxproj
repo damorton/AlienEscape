@@ -12,7 +12,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Classes\DAO\GameDAO.cpp" />
-    <ClCompile Include="Classes\DAO\StoryPoint.cpp" />
+    <ClCompile Include="Classes\DAO\Record.cpp" />
     <ClCompile Include="Classes\DAO\tinyxml2.cpp" />
     <ClCompile Include="Classes\Enemy.cpp" />
     <ClCompile Include="Classes\GameScene.cpp" />
@@ -29,9 +29,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Classes\Character.h" />
-    <ClInclude Include="Classes\DAO\StoryChoice.h" />
+    <ClInclude Include="Classes\DAO\Resource.h" />
     <ClInclude Include="Classes\DAO\GameDAO.h" />
-    <ClInclude Include="Classes\DAO\StoryPoint.h" />
+    <ClInclude Include="Classes\DAO\Record.h" />
     <ClInclude Include="Classes\DAO\TextItem.h" />
     <ClInclude Include="Classes\DAO\tinyxml2.h" />
     <ClInclude Include="Classes\Definitions.h" />

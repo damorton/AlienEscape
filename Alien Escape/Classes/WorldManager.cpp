@@ -43,7 +43,7 @@ bool WorldManager::init()
 	}
 
 	/*
-	std::shared_ptr<std::vector<StoryPoint>> resources = m_pGameDAO->read();		
+	std::shared_ptr<std::vector<Record>> resources = m_pGameDAO->read();		
 
 	for (int i = 0; i < resources->size(); i++)
 	{
@@ -112,15 +112,15 @@ bool WorldManager::init()
 
 std::string WorldManager::readDAO(std::string name)
 {
-	std::shared_ptr<std::vector<StoryPoint>> resources = m_pGameDAO->read();
+	std::shared_ptr<std::vector<Record>> resources = m_pGameDAO->read();
 
 	for (int i = 0; i < resources->size(); i++)
 	{
-		for (int j = 0; j < resources->at(i).getStoryChoices()->size(); j++)
+		for (int j = 0; j < resources->at(i).getResources()->size(); j++)
 		{
-			if (resources->at(i).getStoryChoices()->at(j).getName() == name)
+			if (resources->at(i).getResources()->at(j).getName() == name)
 			{
-				return resources->at(i).getStoryChoices()->at(j).getValue();
+				return resources->at(i).getResources()->at(j).getValue();
 			}						
 		}
 	}
@@ -146,37 +146,37 @@ bool WorldManager::isXMLFileExist()
 
 void WorldManager::loadDefaultConfig(IGameDAO* dao)
 {
-	std::shared_ptr<std::vector<StoryPoint>> resources = dao->read();
+	std::shared_ptr<std::vector<Record>> resources = dao->read();
 
 	// Menu Scene Config
-	StoryPoint gameConfig;
+	Record gameConfig;
 	gameConfig.setName("GameConfig");
-	gameConfig.addFilePath("GameName", "Alien Escape");	
-	gameConfig.addFilePath("GameFont", "Resources/Fonts/go3v2.ttf");
+	gameConfig.addResource("GameName", "Alien Escape");	
+	gameConfig.addResource("GameFont", "Resources/Fonts/go3v2.ttf");
 	resources->push_back(gameConfig);
 
 	// Menu Scene Config
-	StoryPoint menuSceneConfig;	
+	Record menuSceneConfig;	
 	menuSceneConfig.setName("MenuScene");	
-	menuSceneConfig.addFilePath("MenuSceneStartLabel", "Start Game");
-	menuSceneConfig.addFilePath("MenuSceneBackground", "Resources/Backgrounds/MenuBackground.png");	
+	menuSceneConfig.addResource("MenuSceneStartLabel", "Start Game");
+	menuSceneConfig.addResource("MenuSceneBackground", "Resources/Backgrounds/MenuBackground.png");	
 	resources->push_back(menuSceneConfig);
 
 	// Menu Scene Config
-	StoryPoint gameSceneConfig;
+	Record gameSceneConfig;
 	gameSceneConfig.setName("GameScene");
-	gameSceneConfig.addFilePath("GameScenePlayer", "Resources/Sprites/Player.png");
-	gameSceneConfig.addFilePath("GameSceneEnemyAlien", "Resources/Sprites/EnemyAlien.png");
-	gameSceneConfig.addFilePath("GameSceneBackgroundA", "Resources/Backgrounds/BackgroundA.png");
-	gameSceneConfig.addFilePath("GameSceneBackgroundB", "Resources/Backgrounds/BackgroundB.png");
-	gameSceneConfig.addFilePath("GameSceneMidgroundA", "Resources/Backgrounds/MidgroundA.png");
-	gameSceneConfig.addFilePath("GameSceneMidgroundB", "Resources/Backgrounds/MidgroundB.png");	
+	gameSceneConfig.addResource("GameScenePlayer", "Resources/Sprites/Player.png");
+	gameSceneConfig.addResource("GameSceneEnemyAlien", "Resources/Sprites/EnemyAlien.png");
+	gameSceneConfig.addResource("GameSceneBackgroundA", "Resources/Backgrounds/BackgroundA.png");
+	gameSceneConfig.addResource("GameSceneBackgroundB", "Resources/Backgrounds/BackgroundB.png");
+	gameSceneConfig.addResource("GameSceneMidgroundA", "Resources/Backgrounds/MidgroundA.png");
+	gameSceneConfig.addResource("GameSceneMidgroundB", "Resources/Backgrounds/MidgroundB.png");	
 	resources->push_back(gameSceneConfig);
 
 	// HUD Config
-	StoryPoint HUDConfig;
+	Record HUDConfig;
 	HUDConfig.setName("HUDConfig");
-	HUDConfig.addFilePath("HUDConfigPause", "Resources/Buttons/Pause.png");
+	HUDConfig.addResource("HUDConfigPause", "Resources/Buttons/Pause.png");
 	resources->push_back(HUDConfig);
 
 	dao->update(resources);

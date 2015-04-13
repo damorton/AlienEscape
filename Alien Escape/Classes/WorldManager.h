@@ -8,7 +8,7 @@
 #include "Player.h"
 
 #include "DAO\GameDAO.h"
-#include "DAO\StoryPoint.h"
+#include "DAO\Record.h"
 
 class IGameDAO;
 class Node;

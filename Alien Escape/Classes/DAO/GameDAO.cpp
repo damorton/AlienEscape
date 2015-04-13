@@ -1,87 +1,86 @@
+/*
+GameDAO.cpp
+
+Data Access Object for read and writing to XML file
+
+@author	David Morton K00179391, James Daly L.I.T
+@date	13.4.15
+*/
 #include "GameDAO.h"
 
-//create
 void GameDAO::create()
 {
+	//Create the XML file using the XMLDOC filename
 	tinyxml2::XMLDocument doc;
 	tinyxml2::XMLNode* node = doc.NewElement("Config");
 	doc.InsertEndChild(node);
 	doc.SaveFile(XMLDOC);
 }
 
-//read
-std::shared_ptr<std::vector<StoryPoint>> GameDAO::read()
+std::shared_ptr<std::vector<Record>> GameDAO::read()
 {
-
-	//construct a story point vector to pass back
-	std::shared_ptr<std::vector<StoryPoint>> storyPointToReturn = std::shared_ptr<std::vector<StoryPoint>>(new std::vector<StoryPoint>());
+	//Create a vector of records and populate with information from the XML file
+	std::shared_ptr<std::vector<Record>> recordToReturn = std::shared_ptr<std::vector<Record>>(new std::vector<Record>());
 
 	tinyxml2::XMLDocument doc;
 	doc.LoadFile(XMLDOC);
 
 	if(doc.LoadFile(XMLDOC) ==  tinyxml2::XML_SUCCESS)
-	{
-		//doc.Parse(XMLDOC);
-
-		//get the first story element
+	{		
+		//Read the XML file and add resources to the vector of records
 		tinyxml2::XMLElement* root = doc.FirstChildElement();
 		for(tinyxml2::XMLElement* child = root->FirstChildElement(); child != NULL; child =  child->NextSiblingElement())
 		{
-			StoryPoint tempStoryPoint;
-			tempStoryPoint.setName(child->FirstChildElement()->GetText());
-			for(tinyxml2::XMLElement* storyChoiceElement = child->FirstChildElement(); storyChoiceElement != NULL; storyChoiceElement = storyChoiceElement->NextSiblingElement())
+			Record tempRecord;
+			tempRecord.setName(child->FirstChildElement()->GetText());
+			for(tinyxml2::XMLElement* resourceElement = child->FirstChildElement(); resourceElement != NULL; resourceElement = resourceElement->NextSiblingElement())
 			{
-				tempStoryPoint.addFilePath(storyChoiceElement->Name(), storyChoiceElement->GetText());
+				tempRecord.addResource(resourceElement->Name(), resourceElement->GetText());
 			}
-
-			storyPointToReturn->push_back(tempStoryPoint);
+			recordToReturn->push_back(tempRecord);
 		}
-		return storyPointToReturn;
 
+		//Return the vector of records and resources
+		return recordToReturn;
 	}
 	return NULL;
 }
-//update
-void GameDAO::update(std::shared_ptr<std::vector<StoryPoint>> resources)
+
+void GameDAO::update(std::shared_ptr<std::vector<Record>> resources)
 {
 	tinyxml2::XMLDocument doc;
 	doc.LoadFile(XMLDOC);
 
+	//Load the XML file and begin reading from the root element
 	if(doc.LoadFile(XMLDOC) ==  tinyxml2::XML_SUCCESS)
 	{
 		doc.Parse(XMLDOC);
 		tinyxml2::XMLElement* root = doc.NewElement("Config");
 		
+		//Write each resource stored in each record from the vector parameter
 		int i = 0;
 		int j = 0;
 		for(i = 0; i<resources->size(); i++)
 		{
 			tinyxml2::XMLElement* storyElement = doc.NewElement(resources->at(i).getName().c_str());
-			//doc.InsertEndChild(storyElement);
 						
-			root->InsertEndChild(storyElement);
-						
-			//write the story choices
-			for(j = 0; j<resources->at(i).getStoryChoices()->size(); j++)
+			root->InsertEndChild(storyElement);							
+			for(j = 0; j<resources->at(i).getResources()->size(); j++)
 			{
-				tinyxml2::XMLElement* storyChoiceElement = doc.NewElement(resources->at(i).getStoryChoices()->at(j).getName().c_str());
-				//tinyxml2::XMLAttribute* storyTextElement = storyChoiceElement->
-				tinyxml2::XMLText* storyChoiceText = doc.NewText(resources->at(i).getStoryChoices()->at(j).getValue().c_str());
-				storyElement->InsertEndChild(storyChoiceElement);
-				storyChoiceElement->InsertEndChild(storyChoiceText);
-				
+				tinyxml2::XMLElement* resourceElement = doc.NewElement(resources->at(i).getResources()->at(j).getName().c_str());
+				tinyxml2::XMLText* resourceText = doc.NewText(resources->at(i).getResources()->at(j).getValue().c_str());
+				storyElement->InsertEndChild(resourceElement);
+				resourceElement->InsertEndChild(resourceText);				
 			}
-
 			doc.InsertEndChild(root);
+		}		
 
-		}
-		//doc.Print();
+		// Save updated file to XMLDOC
 		doc.SaveFile(XMLDOC);
 	}
 }
 
-//delete
 void GameDAO::del()
 {
-
+	// Not used
 }

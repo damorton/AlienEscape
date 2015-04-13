@@ -22,9 +22,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="Classes\DAO\StoryPoint.cpp">
-      <Filter>Classes\DAO</Filter>
-    </ClCompile>
     <ClCompile Include="Classes\DAO\tinyxml2.cpp">
       <Filter>Classes\DAO</Filter>
     </ClCompile>
@@ -64,14 +61,11 @@
     <ClCompile Include="Classes\DAO\GameDAO.cpp">
       <Filter>Classes\DAO</Filter>
     </ClCompile>
+    <ClCompile Include="Classes\DAO\Record.cpp">
+      <Filter>Classes\DAO</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Classes\DAO\StoryChoice.h">
-      <Filter>Classes\DAO</Filter>
-    </ClInclude>
-    <ClInclude Include="Classes\DAO\StoryPoint.h">
-      <Filter>Classes\DAO</Filter>
-    </ClInclude>
     <ClInclude Include="Classes\DAO\TextItem.h">
       <Filter>Classes\DAO</Filter>
     </ClInclude>
@@ -118,6 +112,12 @@
       <Filter>Classes\Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Classes\DAO\GameDAO.h">
+      <Filter>Classes\DAO</Filter>
+    </ClInclude>
+    <ClInclude Include="Classes\DAO\Resource.h">
+      <Filter>Classes\DAO</Filter>
+    </ClInclude>
+    <ClInclude Include="Classes\DAO\Record.h">
       <Filter>Classes\DAO</Filter>
     </ClInclude>
   </ItemGroup>
