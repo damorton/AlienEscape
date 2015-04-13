@@ -1,3 +1,11 @@
+/*
+Definitions.h
+
+Definitions used for game configuration and control
+
+@author	David Morton K00179391
+@date	13.4.15
+*/
 #ifndef DEFINITIONS_H_
 #define DEFINITIONS_H_
 

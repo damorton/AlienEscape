@@ -4,13 +4,10 @@
 enum SceneState{ RUNNING, PAUSED, DESTROY };
 
 class Scene{
-public:
-	Scene(); //constructor
-	
-	virtual bool init();
-	virtual bool run();
-	virtual void cleanup();
-	virtual ~Scene(); //deconstructor
+public:	
+	virtual bool init() = 0;
+	virtual bool run() = 0;
+	virtual void cleanup() = 0;	
 	virtual void pause(){ thisSceneState = PAUSED; };
 	virtual void resume(){ thisSceneState = RUNNING; };
 	bool isPaused(){ if (thisSceneState == PAUSED) return true; else return false; };

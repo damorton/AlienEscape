@@ -1,3 +1,13 @@
+/*
+GameScene.h
+
+Game scene runs the main Game Loop and handles the creation and destruction
+of all Sprite in game. The Game Scene contains the HUD and controls frame rate,
+input processing, rendering and all timing related tasks.
+
+@author	David Morton K00179391
+@date	13.4.15
+*/
 #ifndef GAMESCENE_H_
 #define GAMESCENE_H_
 

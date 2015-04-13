@@ -1,7 +1,0 @@
-<Story>
-    <StoryPoint>
-        <StoryText>You Open on a courtyard, it is dark. You see a Door</StoryText>
-        <StoryChoice>1. Open Door</StoryChoice>
-        <StoryChoice>2. Run Away</StoryChoice>
-    </StoryPoint>
-</Story>

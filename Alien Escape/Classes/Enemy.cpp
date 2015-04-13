@@ -1,3 +1,11 @@
+/*
+Enemy.cpp
+
+In game enemy containing Sprite information
+
+@author	David Morton K00179391
+@date	13.4.15
+*/
 #include <iostream>
 #include "Enemy.h"
 #include "GameScene.h"
@@ -7,6 +15,7 @@
 bool Enemy::init()
 {
 	m_pWorldManager = WorldManager::getInstance();
+
 	//Initialize the offsets
 	m_PosX = SCREEN_WIDTH;
 	m_PosY = SCREEN_HEIGHT - m_pSprite.getHeight();
@@ -47,9 +56,10 @@ bool Enemy::init()
 
 void Enemy::handleEvent(SDL_Event& e)
 {	
-	//If a key was pressed
+	//If a key was pressed mimic player jumping
 	if (e.type == SDL_KEYDOWN && e.key.repeat == 0)
 	{
+		//Jump direction change based on gravity
 		if (m_pWorldManager->getGravityDirection() == GRAVITY_DOWN && e.key.keysym.sym == SDLK_UP) this->jump();
 		else if (m_pWorldManager->getGravityDirection() == GRAVITY_UP && e.key.keysym.sym == SDLK_DOWN) this->jump();
 	}		
@@ -74,13 +84,13 @@ void Enemy::jump()
 
 void Enemy::move(float timeStep)
 {	
-	m_fDeltaTime = timeStep;
-		
+	//Move the Sprite smoothly
+	m_fDeltaTime = timeStep;		
 	m_VelX = -m_pWorldManager->getGameWorldSpeed() * 60;
 
 	//Move the dot left or right
-	m_PosX += m_VelX * timeStep;
-	// Update bounding Box
+	m_PosX += m_VelX * m_fDeltaTime;
+	//Update bounding Box
 	m_pSprite.getBoundBox()->x = m_PosX;
 	
 	//If the dot went too far to the left or right
@@ -90,8 +100,8 @@ void Enemy::move(float timeStep)
 		m_eState = ALIVE;
 	}	
 	
-	//Move the Enemy up or down
-	m_PosY += m_VelY * timeStep;
+	//Move the Enemy up or down and update the bounding box
+	m_PosY += m_VelY * m_fDeltaTime;
 	m_pSprite.getBoundBox()->y = m_PosY;
 
 	//If the Enemy went too far up or down
@@ -122,6 +132,8 @@ void Enemy::move(float timeStep)
 		}
 	}
 	*/
+
+	// Gravitational force direction
 	if (m_pWorldManager->getGravityDirection() == GRAVITY_DOWN)
 	{
 		m_VelY += GRAVITY;

@@ -46,9 +46,6 @@
     <ClCompile Include="Classes\Player.cpp">
       <Filter>Classes\Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Classes\Scene.cpp">
-      <Filter>Classes\Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Classes\Sprite.cpp">
       <Filter>Classes\Source Files</Filter>
     </ClCompile>

@@ -21,7 +21,6 @@
     <ClCompile Include="Classes\MenuScene.cpp" />
     <ClCompile Include="Classes\Node.cpp" />
     <ClCompile Include="Classes\Player.cpp" />
-    <ClCompile Include="Classes\Scene.cpp" />
     <ClCompile Include="Classes\Sprite.cpp" />
     <ClCompile Include="Classes\Timer.cpp" />
     <ClCompile Include="Classes\WorldManager.cpp" />
