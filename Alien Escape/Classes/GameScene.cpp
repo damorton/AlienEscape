@@ -1,5 +1,5 @@
 /*
-GameScene.h
+GameScene.cpp
 
 Game scene runs the main Game Loop and handles the creation and destruction
 of all Sprite in game. The Game Scene contains the HUD and controls frame rate,
@@ -8,6 +8,7 @@ input processing, rendering and all timing related tasks.
 @author	David Morton K00179391
 @date	13.4.15
 */
+//Includes
 #include "GameScene.h"
 #include "MenuScene.h"
 #include "WorldManager.h"
@@ -34,17 +35,20 @@ GameScene::GameScene()
 
 GameScene::~GameScene()
 {
+	//Clean up all resources on destruction
 	this->cleanup();
 }
 
 bool GameScene::init()
 {
+	//Initialize the Game Scene
 	bool success = true;
 	thisSceneState = RUNNING;
 	m_pWorldManager = WorldManager::getInstance();	
 	m_pWorldManager->resetGame();	
 	m_TextColor = COLOR_WHITE;
 		
+	//Create Player and Enemy(s) and register with the World Manager
 	m_pPlayer = new Player();
 	m_pWorldManager->registerPlayer(m_pPlayer);	
 	m_pEnemyAlien = new Enemy();
@@ -52,6 +56,8 @@ bool GameScene::init()
 	m_pWorldManager->registerGameNode((Node*)m_pEnemyAlien);
 	//m_pEnemyAlien2 = new Enemy();
 	//m_pWorldManager->registerGameNode((Node*)m_pEnemyAlien2);
+
+	//Creat the HUD and Gravity flip timer
 	m_pHUD = new HUD();
 	m_pGravityTimer = new Timer();
 	
@@ -62,27 +68,26 @@ bool GameScene::init()
 
 bool GameScene::run()
 {
-	// run game loop
+	//Run the game loop and return control to the Menu Scene on exit
 	this->update();
 	return 0;
 }
 
 bool GameScene::loadMedia()
-{
-	printf("GameScene: Loading Media\n");
+{	
 	bool success = true;
 
-	// Sprites
+	//Load Player Sprite from XML file
 	if (!m_pPlayer->getSprite()->loadFromFile(m_pWorldManager->readDAO("GameScenePlayer")))
 	{
-		printf("Failed to load walking animation texture!\n");
+		printf("Failed to load player texture!\n");
 		success = false;
 	}	
 
-	// Enemy
+	//Load Enemy Sprite from XML file
 	if (!m_pEnemyAlien->getSprite()->loadFromFile(m_pWorldManager->readDAO("GameSceneEnemyAlien")))
 	{
-		printf("Failed to load walking animation texture!\n");
+		printf("Failed to load enemy texture!\n");
 		success = false;
 	}
 
@@ -95,15 +100,15 @@ bool GameScene::loadMedia()
 	*/
 
 
-	// Fonts
+	//Load font from XML file
 	m_Font = TTF_OpenFont(m_pWorldManager->readDAO("GameFont").c_str(), 28);
 	if (m_Font == NULL)
 	{
-		printf("Failed to load lazy font! SDL_ttf Error: %s\n", TTF_GetError());
+		printf("Failed to load font SDL_ttf Error: %s\n", TTF_GetError());
 		success = false;
 	}	
 
-	//Load background texture
+	//Load background textures from XML file
 	if (!m_BackgroundA.loadFromFile(m_pWorldManager->readDAO("GameSceneBackgroundA")))
 	{
 		printf("Failed to load background texture!\n");
@@ -124,12 +129,13 @@ bool GameScene::loadMedia()
 		printf("Failed to load background texture!\n");
 		success = false;
 	}
-
+	printf("GameScene: Media loaded\n");
 	return success;
 }
 
 void GameScene::pause()
 {
+	//Pause the game and delta timer
 	if (thisSceneState == PAUSED)
 	{
 		thisSceneState = RUNNING;
@@ -144,15 +150,15 @@ void GameScene::pause()
 
 bool GameScene::update()
 {	
-	
+	//Initialize the main game loop
 	SDL_Event e;
 	float backgroundAscrollingOffset = 0;
 	float backgroundBscrollingOffset = SCREEN_WIDTH;
 	float midgroundAscrollingOffset = 0;
 	float midgroundBscrollingOffset = SCREEN_WIDTH;
-	Timer fpsTimer;
-	Timer capTimer;
-	deltaTimer = new Timer();
+	Timer fpsTimer; //Frames per second timer
+	Timer capTimer; //Frame rate limiter
+	deltaTimer = new Timer(); //Timer step
 	fpsTimer.start();	
 	int countedFrames = 0;	
 	m_pGravityTimer->start();
@@ -161,7 +167,6 @@ bool GameScene::update()
 	while (thisSceneState != DESTROY)
 	{		
 		capTimer.start();
-
 
 		// -------------------- INPUT --------------------	
 		while (SDL_PollEvent(&e) != 0)
@@ -178,18 +183,17 @@ bool GameScene::update()
 				// Characters
 				m_pPlayer->handleEvent(e);
 				m_pEnemyAlien->handleEvent(e);
-				//m_pEnemyAlien2->handleEvent(e);
+				//m_pEnemyAlien2->handleEvent(e);			
 			}
 
+			//HUD must continue updating in order to handle inputs for pause button
 			m_pHUD->handleEvent(e);
-			
 		}	
 
 
-		// If the game is not paused
+		//If the game is not paused
 		if (!m_pWorldManager->getInstance()->getRunningScene()->isPaused())
 		{
-
 			// -------------------- LOGIC --------------------
 
 			m_fAverageFPS = countedFrames / (fpsTimer.getTicks() / 1000.f);
@@ -234,7 +238,7 @@ bool GameScene::update()
 				midgroundBscrollingOffset = SCREEN_WIDTH;
 			}
 
-			// Gravity controls
+			//Gravity controls
 			if (m_pGravityTimer->getTicks() > 3000)
 			{	
 				if (m_pEnemyAlien->getSprite()->getPositionX() > SCREEN_WIDTH * .60)
@@ -245,9 +249,10 @@ bool GameScene::update()
 				m_pGravityTimer->start();				
 			}
 
-			// Collisions
+			//Collisions
 			if (m_pWorldManager->checkCollisions())
-			{				
+			{			
+				//Game over, return control to the Menu Scene
 				return 0;
 			}
 			/*
@@ -289,48 +294,41 @@ bool GameScene::update()
 
 		
 		// -------------------- DELAY --------------------
+
+		//Limit the number of frames per second by introducing a delay in each update loop
 		++countedFrames;
 		int frameTicks = capTimer.getTicks();
 		if (frameTicks < SCREEN_TICK_PER_FRAME)
 		{
 			SDL_Delay(SCREEN_TICK_PER_FRAME - frameTicks);
-		}
-				
+		}				
 	}
 	// -------------------- GAME LOOP END --------------------
 	return 0;
 }
 
 void GameScene::cleanup()
-{
-	printf("GameScene: Destroying Assets\n");
-	//Free loaded images
-	m_FPSTextTexture.free();
-	m_GravityTextTexture.free();
-	m_DistanceTextTexture.free();
+{	
+	//Free loaded images	
 	m_BackgroundA.free();
 	m_BackgroundB.free();
 	m_MidgroundA.free();
 	m_MidgroundB.free();	
 		
-	// Delete Player	
+	//Delete game objects	
 	delete m_pPlayer;
 	m_pPlayer = nullptr;
-
 	delete m_pEnemyAlien;
 	m_pEnemyAlien = nullptr;
-
 	//delete m_pEnemyAlien2;
 	//m_pEnemyAlien2 = nullptr;
-
-
 	delete deltaTimer;
 	deltaTimer = nullptr;
-
 	delete m_pHUD;
 	m_pHUD = nullptr;
 
 	//Free global font
 	TTF_CloseFont(m_Font);
 	m_Font = nullptr;	
+	printf("GameScene: Assets destroyed\n");
 }

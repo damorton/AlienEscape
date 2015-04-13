@@ -14,11 +14,12 @@ class MenuScene : public  Scene
 public:
 	MenuScene();
 	virtual ~MenuScene();
-	virtual bool init();
-	virtual bool run();
-	virtual void cleanup();
-	virtual bool loadMedia();
-	virtual void startGame();
+	bool init();
+	bool run();
+	void cleanup();
+	void pause(){};
+	bool loadMedia();
+	void startGame();
 	
 private:
 	WorldManager* m_pWorldManager;

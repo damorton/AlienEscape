@@ -8,8 +8,7 @@ public:
 	virtual bool init() = 0;
 	virtual bool run() = 0;
 	virtual void cleanup() = 0;	
-	virtual void pause(){ thisSceneState = PAUSED; };
-	virtual void resume(){ thisSceneState = RUNNING; };
+	virtual void pause() = 0;	
 	bool isPaused(){ if (thisSceneState == PAUSED) return true; else return false; };
 
 protected:
