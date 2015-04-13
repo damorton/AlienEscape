@@ -1,3 +1,13 @@
+/*
+Player.cpp
+
+Player object contains Sprite information. Handles game input and
+records players scores
+
+@author	David Morton K00179391
+@date	13.4.15
+*/
+//Includes
 #include <iostream>
 #include "Player.h"
 #include "GameScene.h"
@@ -6,6 +16,7 @@
 
 bool Player::init()
 {		
+	//Initialize player
 	m_pWorldManager = WorldManager::getInstance();	
 	//Initialize the offsets
 	m_PosX = SCREEN_WIDTH * .05;
@@ -15,6 +26,7 @@ bool Player::init()
 	m_VelX = 0;
 	m_VelY = 0;
 
+	//Animation frames
 	m_nFrame = 0;
 	
 	//Set sprite clips
@@ -38,12 +50,15 @@ bool Player::init()
 	gSpriteClips[3].w = 32;
 	gSpriteClips[3].h = 103;
 
+	//Player init status
 	m_eState = ALIVE;
 	m_bIsJumping = false;
 	m_fDeltaTime = 0;
 	m_nNumberOfJumps = 0;
 	m_bBoostEnabled = true;
 	m_bIsBoosting = false;
+
+	//Start the Boost timer and pause it
 	m_TBoostTimer->start();
 	m_TBoostTimer->pause();
 	return true;
@@ -54,14 +69,17 @@ void Player::handleEvent(SDL_Event& e)
 	//If a key was pressed
 	if (e.type == SDL_KEYDOWN && e.key.repeat == 0)
 	{		
+		//Change jump button based on gravity direction
 		if (m_pWorldManager->getGravityDirection() == GRAVITY_DOWN && e.key.keysym.sym == SDLK_UP) this->jump();
 		else if (m_pWorldManager->getGravityDirection() == GRAVITY_UP && e.key.keysym.sym == SDLK_DOWN) this->jump();			
 	}
-	
+		
 	if (e.type == SDL_KEYDOWN && e.key.repeat == 0)
 	{
+		//If the space key is pressed
 		if (e.key.keysym.sym == SDLK_SPACE)
 		{	
+			//Boost the player by increasing game speed, unpause the Boost timer clock
 			if (m_TBoostTimer->getTicks() < 2000 && m_bBoostEnabled)
 			{			
 				m_bIsBoosting = true;
@@ -73,6 +91,7 @@ void Player::handleEvent(SDL_Event& e)
 	}
 	else if (e.type == SDL_KEYUP && e.key.repeat == 0)
 	{
+		//If the space key is released, turn off the player boost and pause the timer
 		if (e.key.keysym.sym == SDLK_SPACE)
 		{				
 			if (m_bIsBoosting)
@@ -116,16 +135,19 @@ void Player::handleEvent(SDL_Event& e)
 
 void Player::jump()
 {	
+	//Apply velocity to the player based on the direction of gravity
 	if (!m_bIsJumping)
 	{
 		m_nNumberOfJumps++;
 		m_bIsJumping = true;
 		if (m_pWorldManager->getGravityDirection() == GRAVITY_DOWN)
 		{
+			//Down force
 			m_VelY -= MAX_JUMP_VELOCITY;			
 		}
 		else
 		{		
+			//Up force
 			m_VelY += MAX_JUMP_VELOCITY;		
 		}
 	}
@@ -134,6 +156,7 @@ void Player::jump()
 
 void Player::move(float timeStep)
 {
+	//If the boost timer is above 2 seconds disable boost
 	if (m_TBoostTimer->getTicks() > 2000)
 	{
 		m_bBoostEnabled = false;
@@ -141,6 +164,7 @@ void Player::move(float timeStep)
 		m_TBoostTimer->unpause();
 	}	
 	
+	//When the booster is disabled, re-enable the booster after 4 seconds
 	//printf("Boost timer : %d\n", m_TBoostTimer->getTicks());
 	if (m_TBoostTimer->getTicks() > 6000)
 	{
@@ -148,15 +172,18 @@ void Player::move(float timeStep)
 		m_TBoostTimer->start();
 		m_TBoostTimer->pause();
 	}
+
+	//Store delta time
 	m_fDeltaTime = timeStep;	
 	
 	//Move the player up or down
-	m_PosY += m_VelY * timeStep;
+	m_PosY += m_VelY * m_fDeltaTime;
+
 	// Update bounding Box
 	m_pSprite.getBoundBox()->x = m_PosX;
 	m_pSprite.getBoundBox()->y = m_PosY;
 
-	//If the player went too far up or down
+	//If the player went too far up or down, reset position. Keep them in the cave 
 	if (m_PosY < FLOOR_POSITION)
 	{
 		m_PosY = FLOOR_POSITION;
@@ -184,6 +211,7 @@ void Player::move(float timeStep)
 		}		
 	}
 	*/
+	//Apply gravity based on the force direction
 	if (m_pWorldManager->getGravityDirection() == GRAVITY_DOWN)
 	{
 		m_VelY += GRAVITY;
@@ -201,16 +229,21 @@ void Player::move(float timeStep)
 	}
 	*/
 
-	// Distance
+	//Distance score increased based on booster status
 	m_nDistance += (m_bIsBoosting) ? 5 : 1;
 	m_nDistanceScore = m_nDistance / SCREEN_FPS;
 
-	if (m_nDistanceScore > 0 && m_nDistanceScore % 2 == 0 && m_pWorldManager->getGameWorldSpeed() < MAX_SPEED) m_pWorldManager->increaseGameWorldSpeed();
+	//Increase the game world speed based on the distance score
+	if (m_nDistanceScore > 0 && m_nDistanceScore % 2 == 0 && m_pWorldManager->getGameWorldSpeed() < MAX_SPEED)
+	{
+		//If the distance score mod 2 == 0 increase speed by a set amount
+		m_pWorldManager->increaseGameWorldSpeed();
+	}
 }
 
 void Player::render()
 {		
-	//Render current frame
+	//Render current frame of Player sprite
 	SDL_Rect* currentClip = &gSpriteClips[m_nFrame / SPRITE_ANIMATION_SPEED];
 	m_pSprite.render((int)m_PosX, (int)m_PosY, currentClip,NULL, NULL, m_pWorldManager->getRendererFlip());
 	
@@ -226,6 +259,7 @@ void Player::render()
 
 void Player::cleanUp()
 {		
+	//Release all resources
 	m_pSprite.free();	
 }
 

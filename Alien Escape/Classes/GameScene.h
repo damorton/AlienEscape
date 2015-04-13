@@ -61,7 +61,7 @@ private:
 	//std::shared_ptr<Player> m_pPlayer; // implement shared pointers if theres enough time
 	Player* m_pPlayer = nullptr;
 	Enemy* m_pEnemyAlien = nullptr;
-	Enemy * m_pEnemyAlien2 = nullptr;
+	//Enemy * m_pEnemyAlien2 = nullptr;
 	HUD* m_pHUD = nullptr;
 	SDL_Color m_TextColor;
 	Timer* deltaTimer;

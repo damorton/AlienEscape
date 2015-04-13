@@ -239,7 +239,7 @@ bool GameScene::update()
 			}
 
 			//Gravity controls
-			if (m_pGravityTimer->getTicks() > 3000)
+			if (m_pGravityTimer->getTicks() > 2000)
 			{	
 				if (m_pEnemyAlien->getSprite()->getPositionX() > SCREEN_WIDTH * .60)
 				{
@@ -324,6 +324,8 @@ void GameScene::cleanup()
 	//m_pEnemyAlien2 = nullptr;
 	delete deltaTimer;
 	deltaTimer = nullptr;
+	delete m_pGravityTimer;
+	m_pGravityTimer = nullptr;
 	delete m_pHUD;
 	m_pHUD = nullptr;
 

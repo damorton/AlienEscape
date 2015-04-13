@@ -1,3 +1,14 @@
+/*
+HUD.cpp
+
+Heads Up Display updates the player and game stats like distance
+travelled and booster status. The HUD contains a pause button allowing the
+player to pause the game during a session.
+
+@author	David Morton K00179391
+@date	13.4.15
+*/
+//Includes
 #include "HUD.h"
 #include "WorldManager.h"
 #include "GameScene.h"
@@ -20,16 +31,18 @@ HUD::HUD()
 
 HUD::~HUD()
 {
+	//Clean up resources
+	this->cleanup();
 }
 
 bool HUD::init()
 {
 	bool success = true;
 	m_pWorldManager = WorldManager::getInstance();
-	//Set text color as White
 	m_TextColor = COLOR_WHITE;
 
-	m_PauseButton = new Label("Resources/Buttons/Pause.png");
+	//Create Pause button and load from XML file
+	m_PauseButton = new Label(m_pWorldManager->readDAO("HUDConfigPause"));
 	m_PauseButton->setPosition(SCREEN_WIDTH - m_PauseButton->getSprite()->getWidth() - PADDING, PADDING);
 	return success;
 }
@@ -38,7 +51,7 @@ bool HUD::loadMedia()
 {	
 	bool success = true;
 	
-	// Fonts
+	//Load Fonts
 	m_Font = TTF_OpenFont(m_pWorldManager->readDAO("GameFont").c_str(), 24);
 	if (m_Font == NULL)
 	{
@@ -58,9 +71,7 @@ void HUD::handleEvent(SDL_Event& e)
 		int x, y;
 		SDL_GetMouseState(&x, &y);
 
-		//Check if mouse is in button
-		
-		
+		//Check if mouse is in button		
 		bool inside = true;
 
 		//Mouse is left of the button
@@ -112,12 +123,12 @@ void HUD::handleEvent(SDL_Event& e)
 	}
 }
 
-
 void HUD::render()
 {
-	
+	//Render the pause button sprite
 	m_PauseButton->render();
 
+	//If DEBUG mode is on render the fps and game speed
 	if (DEBUG)
 	{
 		// Game speed
@@ -129,7 +140,7 @@ void HUD::render()
 		}
 		m_GameSpeedTextTexture.render(PADDING, SCREEN_HEIGHT - PADDING - m_FPSTextTexture.getHeight() - m_GameSpeedTextTexture.getHeight());
 
-		//Set text to be rendered
+		//FPS
 		fpsText.str("");
 		fpsText << "FPS: " << m_pWorldManager->getAverageFPS();
 		if (!m_FPSTextTexture.loadFromRenderedText(fpsText.str().c_str(), m_TextColor, m_Font))
@@ -175,12 +186,18 @@ void HUD::render()
 		printf("Unable to render texture!\n");
 	}
 	m_LivesTexture.render(SCREEN_WIDTH - m_LivesTexture.getWidth() - PADDING, SCREEN_HEIGHT - PADDING - m_LivesTexture.getHeight());
-
 	
+}
+
+bool HUD::run()
+{
+	//HUD update loop; NOT USED
+	return 0;
 }
 
 void HUD::cleanup()
 {
+	//Release rsources
 	m_FPSTextTexture.free();	
 	m_GravityTextTexture.free();
 	m_DistanceTextTexture.free();
@@ -188,10 +205,12 @@ void HUD::cleanup()
 	m_BoostTexture.free();
 	m_GameSpeedTextTexture.free();
 
+	//Delete game objects
 	delete m_PauseButton;
 	m_PauseButton = nullptr;
-
 	m_pWorldManager = nullptr;
+
+	//Release font resource
 	TTF_CloseFont(m_Font);
 	m_Font = nullptr;
 }

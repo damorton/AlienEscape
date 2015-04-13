@@ -1,3 +1,14 @@
+/*
+MenuScene.cpp
+
+Menu Scene is the title screen for the game and contains the title label and
+start game button. The Menu Scene has an update loop that will process inputs
+and render textures/Sprites
+
+@author	David Morton K00179391
+@date	13.4.15
+*/
+//Includes
 #include "MenuScene.h"
 #include "GameScene.h"
 #include "WorldManager.h"
@@ -21,6 +32,7 @@ MenuScene::MenuScene()
 
 MenuScene::~MenuScene()
 {
+	printf("MenuScene: Destroyed\n");
 	this->cleanup();
 }
 
@@ -39,7 +51,7 @@ bool MenuScene::loadMedia()
 	printf("MenuScene: Loading Media\n");
 	bool success = true;
 
-	// Fonts
+	//Load Fonts from XML file
 	m_Font = TTF_OpenFont(m_pWorldManager->readDAO("GameFont").c_str(), 38);
 	if (m_Font == NULL)
 	{
@@ -47,7 +59,7 @@ bool MenuScene::loadMedia()
 		success = false;
 	}
 
-	//Load background texture
+	//Load background texture from XML file
 	//if (!m_Background.loadFromFile("Resources/Backgrounds/MenuBackground.png"))
 	if (!m_Background.loadFromFile(m_pWorldManager->readDAO("MenuSceneBackground")))
 	{
@@ -59,9 +71,11 @@ bool MenuScene::loadMedia()
 	//m_TextColor = COLOR_WHITE;
 	m_TextColor = {255, 0, 89, 255};
 
+	//Create title label
 	m_Title = new Label(m_pWorldManager->readDAO("GameName"), m_TextColor, m_Font);
 	m_Title->setPosition(SCREEN_WIDTH * .5 - m_Title->getSprite()->getWidth() / 2, SCREEN_HEIGHT * .05);
 
+	//Create start button	
 	m_StartButton = new Label(m_pWorldManager->readDAO("MenuSceneStartLabel"), m_TextColor, m_Font);
 	m_StartButton->setPosition(SCREEN_WIDTH * .5 - m_StartButton->getSprite()->getWidth() / 2, SCREEN_HEIGHT * .85);
 
@@ -77,9 +91,8 @@ void MenuScene::startGame()
 
 bool MenuScene::run()
 {		
-	SDL_Event e;
-
-	
+	//Initialize update loop
+	SDL_Event e;	
 	int lifetimeofscene = 200;
 	Timer capTimer;
 	int countedFrames = 0;
@@ -93,6 +106,7 @@ bool MenuScene::run()
 		capTimer.start();
 		while (SDL_PollEvent(&e) != 0)
 		{
+			//If x button clicked
 			if (e.type == SDL_QUIT)
 			{
 				thisSceneState = DESTROY;
@@ -101,6 +115,7 @@ bool MenuScene::run()
 			//If a key was pressed
 			if (e.type == SDL_KEYDOWN && e.key.repeat == 0)
 			{
+				//Space key to start new game; Start Button now implmeneted
 				if (e.key.keysym.sym == SDLK_SPACE)
 				{
 					/*
@@ -119,8 +134,6 @@ bool MenuScene::run()
 				SDL_GetMouseState(&x, &y);
 
 				//Check if mouse is in button
-
-
 				bool inside = true;
 
 				//Mouse is left of the button
@@ -180,9 +193,10 @@ bool MenuScene::run()
 		SDL_SetRenderDrawColor(m_pWorldManager->getRenderer(), 0x00, 0x00, 0x00, 0xFF);
 		SDL_RenderClear(m_pWorldManager->getRenderer());
 
-		// Render background A
+		//Render background
 		m_Background.render(0, 0);
 
+		//Render Title and Start Button
 		m_Title->render();
 		m_StartButton->render();
 		
@@ -200,12 +214,20 @@ bool MenuScene::run()
 }
 
 void MenuScene::cleanup()
-{
-	printf("MenuScene: Destroying Assets\n");
+{	
+	m_pWorldManager = nullptr;
+
 	//Free loaded images
-	m_Background.free();		
+	m_Background.free();	
+	
+	//Delete game objects
+	delete m_StartButton;
+	m_StartButton = nullptr;
+	delete m_Title;
+	m_Title = nullptr;
 		
 	//Free global font
 	TTF_CloseFont(m_Font);
 	m_Font = nullptr;
+	printf("MenuScene: Destroying Assets\n");
 }

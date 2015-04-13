@@ -1,16 +1,28 @@
+/*
+Node.cpp
+
+Node is a game object and contains the bounding box for
+all objects created in the game. Also calculates collisions
+
+@author	David Morton K00179391
+@date	13.4.15
+*/
+//Includes
 #include "Node.h"
 
 Node::Node()
 {
+	//Initialize the game node bounding box
 	m_BoundingBox = new SDL_Rect();
 	m_BoundingBox->x = 0;
 	m_BoundingBox->y = 0;
 	m_BoundingBox->w = 0;
-	m_BoundingBox->h = 0;
+	m_BoundingBox->h = 0;	
 }
 
 Node::~Node()
 {	
+	//Delete resources
 	delete m_BoundingBox;
 	m_BoundingBox = nullptr;	
 }

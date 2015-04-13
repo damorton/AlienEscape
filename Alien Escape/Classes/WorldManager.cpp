@@ -1,59 +1,75 @@
+/*
+WorldManager.cpp
+
+WorldManager is a singleton class used to access all game information from anywhere in the
+system. It also manages collisions between objects in the game by checking the game
+objects bounding boxes. The WorldManager communicates directly with the games Data Access object
+allowing data to be read from, and written to XML files stored on the device. All aspects of the game can
+be modified by the World Manager.
+
+@author	David Morton K00179391
+@date	13.4.15
+*/
+//Includes
+#include <iostream>
 #include "WorldManager.h"
 #include "MenuScene.h"
-#include "Definitions.h"
 #include "Enemy.h"
-#include <iostream>
+#include "DAO\Record.h"
 
 WorldManager* WorldManager::m_Instance = 0;
 
 WorldManager* WorldManager::getInstance()
 {	
+	//Create the World Manager and return it
 	if (m_Instance == nullptr)
 		m_Instance = new WorldManager();
 	return m_Instance;
 }
 
-WorldManager::~WorldManager()
-{
-	this->cleanUp();
-}
-
 WorldManager::WorldManager()
-{	
+{
 	if (!init())
 	{
 		printf("Failed to initialize Game Scene!\n");
 	}
 }
 
+WorldManager::~WorldManager()
+{
+	//Clean up all resources created by the World Manager
+	this->cleanUp();
+}
+
 bool WorldManager::init()
 {	
 	bool success = true;
 
-	// Game DAO
+	//Create Game DAO is it dosent already exist
 	if (m_pGameDAO == nullptr)
 	{
 		m_pGameDAO = new GameDAO();
 	}
 	
+	//Check id the XML file exists
 	if (!isXMLFileExist())
 	{
 		m_pGameDAO->create();
 		loadDefaultConfig(m_pGameDAO);
 	}
 
-	/*
+	std::cout << "Game XML Configuration Settings\n-------------------------------" << std::endl;
 	std::shared_ptr<std::vector<Record>> resources = m_pGameDAO->read();		
 
 	for (int i = 0; i < resources->size(); i++)
 	{
-		for (int j = 0; j < resources->at(i).getStoryChoices()->size(); j++)
+		for (int j = 0; j < resources->at(i).getResources()->size(); j++)
 		{
-			std::cout << resources->at(i).getStoryChoices()->at(j).getName() << " -> " << resources->at(i).getStoryChoices()->at(j).getValue() << std::endl;
+			std::cout << resources->at(i).getResources()->at(j).getName() << " -> " << resources->at(i).getResources()->at(j).getValue() << std::endl;
 		}
 	}
-	*/
 	
+	std::cout << "\nGame Debug\n---------" << std::endl;
 	//m_pGameDAO->update(resources);
 
 	if (SDL_Init(SDL_INIT_VIDEO) < 0)
@@ -202,6 +218,7 @@ bool WorldManager::checkCollisions()
 			
 			if (m_pPlayer->getState() == Character::DEAD)
 			{
+				printf("Game Over\n");
 				collision = true;
 				m_vpGameNodes.clear();
 				// Game over
@@ -233,6 +250,7 @@ void WorldManager::flipGravity()
 		m_eGravitationalPull = GRAVITY_DOWN;
 		m_RendererFlip = SDL_FLIP_NONE;
 	}	
+	printf("Gravity Flipped\n");
 }
 
 void WorldManager::runWithScene(Scene* scene)
@@ -240,6 +258,7 @@ void WorldManager::runWithScene(Scene* scene)
 	printf("WorldManager: Changing running scene...\n");
 	if (currentRunningScene != nullptr)
 	{		
+		currentRunningScene->cleanup();
 		delete currentRunningScene;
 	}
 

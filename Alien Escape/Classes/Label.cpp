@@ -1,3 +1,12 @@
+/*
+Label.h
+
+Label is used to display text information or button images.
+Contains Sprite information.
+
+@author	David Morton K00179391
+@date	13.4.15
+*/
 #include <iostream>
 #include "Label.h"
 
