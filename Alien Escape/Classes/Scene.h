@@ -11,10 +11,13 @@ needed for all scenes in the game.
 #ifndef SCENE_H_
 #define SCENE_H_
 
+#include "Node.h"
+
 //Scene state management
 enum SceneState{ RUNNING, PAUSED, DESTROY };
 
-class Scene{
+class Scene : public Node
+{
 public:	
 
 	//Pure virutal functions

@@ -16,7 +16,7 @@ Contains Sprite information.
 #include "Definitions.h"
 #include "Sprite.h"
 
-class Label
+class Label : public Node
 {
 public:
 	//Constructors

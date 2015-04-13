@@ -46,6 +46,9 @@
     <ClInclude Include="Classes\Timer.h" />
     <ClInclude Include="Classes\WorldManager.h" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="ClassDiagram.cd" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{91A079DC-082B-4E51-AC01-CF71ADF753A3}</ProjectGuid>
     <RootNamespace>Alien_Escape</RootNamespace>

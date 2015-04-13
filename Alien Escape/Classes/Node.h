@@ -1,3 +1,5 @@
+#ifndef NODE_H
+#define NODE_H
 /*
 Node.h
 
@@ -38,3 +40,5 @@ public:
 protected:
 	SDL_Rect* m_BoundingBox; //Bounding Box	
 };
+
+#endif

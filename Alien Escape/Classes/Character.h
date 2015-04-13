@@ -11,8 +11,9 @@ Character attributes and basic function structure
 
 // includes
 #include "Definitions.h"
+#include "Node.h"
 
-class Character
+class Character : public Node
 {
 public:	
 	typedef enum { ALIVE, DEAD } EState; //Character state
