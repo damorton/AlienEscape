@@ -1,5 +1,4 @@
-#ifndef NODE_H
-#define NODE_H
+
 /*
 Node.h
 
@@ -9,6 +8,10 @@ all objects created in the game. Also calculates collisions
 @author	David Morton K00179391
 @date	13.4.15
 */
+#ifndef NODE_H
+#define NODE_H
+
+//Includes
 #include "Definitions.h"
 
 class Node
