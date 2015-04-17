@@ -16,14 +16,16 @@ be modified by the World Manager.
 //Includes
 #include <vector>
 #include "Player.h"
+#include "Subject.h"
 #include "DAO\GameDAO.h"
 
 //Forward Declarations
 class IGameDAO;
 class Scene;
 class Node;
+class Achievements;
 
-class WorldManager
+class WorldManager : public Subject
 {
 public:
 	//Return World Manager instance
@@ -111,6 +113,9 @@ private:
 	float m_fAverageFPS;
 	Player* m_pPlayer;	
 	std::vector<Node*> m_vpGameNodes; //Vector do game nodes
+
+	//Achievements
+	Observer* m_pAchievementSystem;
 
 	//DAO
 	IGameDAO* m_pGameDAO = nullptr;	

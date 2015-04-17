@@ -117,6 +117,15 @@
     <ClInclude Include="Classes\DAO\Record.h">
       <Filter>Classes\DAO</Filter>
     </ClInclude>
+    <ClInclude Include="Classes\Achievements.h">
+      <Filter>Classes\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Classes\Observer.h">
+      <Filter>Classes\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Classes\Subject.h">
+      <Filter>Classes\Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="ClassDiagram.cd" />

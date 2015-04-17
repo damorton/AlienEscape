@@ -27,6 +27,7 @@
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Classes\Achievements.h" />
     <ClInclude Include="Classes\Character.h" />
     <ClInclude Include="Classes\DAO\Resource.h" />
     <ClInclude Include="Classes\DAO\GameDAO.h" />
@@ -40,9 +41,11 @@
     <ClInclude Include="Classes\Label.h" />
     <ClInclude Include="Classes\MenuScene.h" />
     <ClInclude Include="Classes\Node.h" />
+    <ClInclude Include="Classes\Observer.h" />
     <ClInclude Include="Classes\Player.h" />
     <ClInclude Include="Classes\Scene.h" />
     <ClInclude Include="Classes\Sprite.h" />
+    <ClInclude Include="Classes\Subject.h" />
     <ClInclude Include="Classes\Timer.h" />
     <ClInclude Include="Classes\WorldManager.h" />
   </ItemGroup>

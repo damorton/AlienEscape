@@ -14,6 +14,7 @@ be modified by the World Manager.
 #include <iostream>
 #include "WorldManager.h"
 #include "MenuScene.h"
+#include "Achievements.h"
 #include "Enemy.h"
 #include "DAO\Record.h"
 
@@ -116,7 +117,9 @@ bool WorldManager::init()
 				}
 			}
 		}
-	}
+	}	
+	m_pAchievementSystem = new Achievements();
+	addObserver(m_pAchievementSystem);
 
 	currentRunningScene = nullptr;
 	m_eGravitationalPull = GRAVITY_DOWN;
@@ -270,6 +273,12 @@ void WorldManager::cleanUp()
 {
 	delete m_Instance;
 	m_Instance = nullptr;
+
+	delete m_pGameDAO;
+	m_pGameDAO = nullptr;
+
+	delete m_pAchievementSystem;
+	m_pAchievementSystem = nullptr;
 
 	SDL_DestroyRenderer(m_Renderer);
 	SDL_DestroyWindow(m_Window);

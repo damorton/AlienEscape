@@ -1,4 +1,3 @@
-
 /*
 Node.h
 
@@ -13,6 +12,12 @@ all objects created in the game. Also calculates collisions
 
 //Includes
 #include "Definitions.h"
+
+enum NodeType{
+	NODE_PLAYER,
+	NODE_ENEMY,
+	NODE_SCENE
+};
 
 class Node
 {
@@ -37,10 +42,15 @@ public:
 	//virtual bool checkCollision(SDL_Rect a, SDL_Rect b);	
 	virtual bool checkCollision(SDL_Rect* node);
 
+	void setNodeType(NodeType type){ m_ENodeType = type; };
+
 	//Getters
 	virtual int getPositionX(){ return m_BoundingBox->x; };
 	virtual int getPositionY(){ return m_BoundingBox->y; };
-protected:
+	NodeType getNodeType(){ return m_ENodeType; };
+
+protected:	
+	NodeType m_ENodeType;
 	SDL_Rect* m_BoundingBox; //Bounding Box	
 };
 

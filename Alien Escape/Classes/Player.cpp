@@ -52,6 +52,7 @@ bool Player::init()
 
 	//Player init status
 	m_eState = ALIVE;
+	m_ENodeType = NODE_PLAYER;
 	m_bIsJumping = false;
 	m_fDeltaTime = 0;
 	m_nNumberOfJumps = 0;
@@ -232,6 +233,19 @@ void Player::move(float timeStep)
 	//Distance score increased based on booster status
 	m_nDistance += (m_bIsBoosting) ? 5 : 1;
 	m_nDistanceScore = m_nDistance / SCREEN_FPS;
+
+	if (m_nDistanceScore >= 10)
+	{
+		m_pWorldManager->notify(this, EVENT_ENTITY_100);
+	}
+	if (m_nDistanceScore >= 20)
+	{
+		m_pWorldManager->notify(this, EVENT_ENTITY_200);
+	}
+	if (m_nDistanceScore >= 30)
+	{
+		m_pWorldManager->notify(this, EVENT_ENTITY_300);
+	}
 
 	//Increase the game world speed based on the distance score
 	if (m_nDistanceScore > 0 && m_nDistanceScore % 2 == 0 && m_pWorldManager->getGameWorldSpeed() < MAX_SPEED)

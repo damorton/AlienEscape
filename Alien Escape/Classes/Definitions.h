@@ -44,4 +44,12 @@ enum Gravity
 	GRAVITY_DOWN
 };
 
+enum Event{
+	EVENT_ENTITY_HIT,
+	EVENT_ENTITY_100,
+	EVENT_ENTITY_200,
+	EVENT_ENTITY_300
+};
+
+
 #endif 
