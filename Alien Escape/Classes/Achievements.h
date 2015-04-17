@@ -5,7 +5,7 @@ Achievements.h
 
 Game achievements system
 
-@author	David Morton K00179391
+@author	David Morton K00179391 
 @date	17.4.15
 */
 #include <iostream>
@@ -54,7 +54,8 @@ private:
 		if (achievement == ACHIEVEMENT_RUN_10_METERS && !distance10AchievementUnlocked)
 		{
 			printf("Achievement Unlocked! Player has run %d meters!\n", achievement);
-			distance10AchievementUnlocked = true;			
+			distance10AchievementUnlocked = true;	
+			// Create a new achievement unlocked event
 		}		
 		if (achievement == ACHIEVEMENT_RUN_20_METERS && !distance20AchievementUnlocked)
 		{

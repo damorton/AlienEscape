@@ -33,8 +33,12 @@ public:
 	// Register an observer
 	void addObserver(Observer* observer)
 	{		
-		m_AObservers[m_iNumberOfObservers] = observer;
-		m_iNumberOfObservers++;
+		if (m_iNumberOfObservers <= MAX_OBSERVERS)
+		{
+			m_AObservers[m_iNumberOfObservers] = observer;
+			m_iNumberOfObservers++;
+			printf("Observer added : %d\n", m_iNumberOfObservers);
+		}		
 	}
 
 	// Remove an observer

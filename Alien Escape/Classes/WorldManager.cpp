@@ -118,8 +118,13 @@ bool WorldManager::init()
 			}
 		}
 	}	
+	
+	// Achievements system
 	m_pAchievementSystem = new Achievements();
 	addObserver(m_pAchievementSystem);
+
+	// Audio system
+
 
 	currentRunningScene = nullptr;
 	m_eGravitationalPull = GRAVITY_DOWN;
