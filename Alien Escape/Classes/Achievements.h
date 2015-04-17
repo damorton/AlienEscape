@@ -1,6 +1,13 @@
 #ifndef ACHIEVEMENTS_H
 #define ACHIEVEMENTS_H
+/*
+Achievements.h
 
+Game achievements system
+
+@author	David Morton K00179391
+@date	17.4.15
+*/
 #include <iostream>
 #include "Observer.h"
 
@@ -16,6 +23,7 @@ public:
 	virtual ~Achievements(){}
 	virtual void onNotify(Node* entity, Event event)
 	{
+		// Unlock achievement based on the event
 		switch (event)
 		{
 		case EVENT_ENTITY_100:
@@ -35,15 +43,14 @@ public:
 			{
 				unlock(ACHIEVEMENT_RUN_30_METERS);
 			}
-			break;
-
-			// Handle other events, and update heroIsOnBridge_...
+			break;			
 		}
 	}
 
 private:
 	void unlock(Achivement achievement)
 	{		
+		// Player distance achievements
 		if (achievement == ACHIEVEMENT_RUN_10_METERS && !distance10AchievementUnlocked)
 		{
 			printf("Achievement Unlocked! Player has run %d meters!\n", achievement);
@@ -59,8 +66,11 @@ private:
 			printf("Achievement Unlocked! Player has run %d meters!\n", achievement);
 			distance30AchievementUnlocked = true;
 		}
+
+		// Other player achievements
 	}
 
+	// Achievement records
 	bool distance10AchievementUnlocked = false;
 	bool distance20AchievementUnlocked = false;
 	bool distance30AchievementUnlocked = false;
